@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Bookings | SKILL HIRE</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(120deg, #e0e7ff 0%, #f4f8fb 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: 2.5rem auto 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(96,165,250,0.10), 0 1.5px 8px rgba(30,41,59,0.08);
+      padding: 2.5rem 2rem 2rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      text-align: center;
+      color: #2563eb;
+      font-size: 2.1rem;
+      margin-bottom: 2rem;
+      letter-spacing: 1px;
+    }
+    .responsive-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(96,165,250,0.06);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .responsive-table th, .responsive-table td {
+      padding: 1rem 0.7rem;
+      text-align: center;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 1rem;
+    }
+    .responsive-table th {
+      background: #f1f5f9;
+      color: #1e293b;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .responsive-table tr:nth-child(even) {
+      background: #f8fafc;
+    }
+    .responsive-table tr:nth-child(odd) {
+      background: #fff;
+    }
+    .pay-btn {
+      background: linear-gradient(90deg, #007bff 0%, #60a5fa 100%);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.5rem 1.2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(96,165,250,0.13);
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 1px;
+    }
+    .pay-btn:hover {
+      background: linear-gradient(90deg, #0056b3 0%, #60a5fa 100%);
+      transform: translateY(-2px) scale(1.04);
+    }
+    .back-btn {
+      margin-top: 1.5rem;
+      background: linear-gradient(90deg, #22c55e 0%, #4ade80 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.8rem 2.2rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(34,197,94,0.13);
+      letter-spacing: 1px;
+      transition: background 0.2s, transform 0.1s;
+      display: block;
+    }
+    .back-btn:hover {
+      background: linear-gradient(90deg, #16a34a 0%, #4ade80 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    @media (max-width: 700px) {
+      .container {
+        padding: 1.2rem 0.2rem 1.2rem 0.2rem;
+      }
+      .responsive-table th, .responsive-table td {
+        padding: 0.7rem 0.2rem;
+        font-size: 0.95rem;
+      }
+      h1 {
+        font-size: 1.3rem;
+      }
+    }
+    @media (max-width: 500px) {
+      .responsive-table, .responsive-table thead, .responsive-table tbody, .responsive-table th, .responsive-table td, .responsive-table tr {
+        display: block;
+      }
+      .responsive-table thead tr {
+        display: none;
+      }
+      .responsive-table tr {
+        margin-bottom: 1.2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(96,165,250,0.06);
+        background: #fff;
+        padding: 0.7rem 0.2rem;
+      }
+      .responsive-table td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+        min-height: 2.2rem;
+      }
+      .responsive-table td:before {
+        position: absolute;
+        top: 0.7rem;
+        left: 1rem;
+        width: 45%;
+        white-space: nowrap;
+        font-weight: 700;
+        color: #2563eb;
+        content: attr(data-label);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>My Bookings</h1>
+    <table class="responsive-table">
+      <thead>
+        <tr>
+          <th>Booking ID</th>
+          <th>Labourer</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-label="Booking ID">BKG001</td>
+          <td data-label="Labourer">Ravi Kumar</td>
+          <td data-label="Date">2024-06-15</td>
+          <td data-label="Time">10:00 AM</td>
+          <td data-label="Status"><button class="pay-btn" onclick="payNow('Ravi Kumar', 500)">Pay</button></td>
+        </tr>
+        <tr>
+          <td data-label="Booking ID">BKG002</td>
+          <td data-label="Labourer">Anita Desai</td>
+          <td data-label="Date">2024-06-18</td>
+          <td data-label="Time">2:30 PM</td>
+          <td data-label="Status"><button class="pay-btn" onclick="payNow('Anita Desai', 700)">Pay</button></td>
+        </tr>
+        <tr>
+          <td data-label="Booking ID">BKG003</td>
+          <td data-label="Labourer">Deepak Rawat</td>
+          <td data-label="Date">2024-06-20</td>
+          <td data-label="Time">9:00 AM</td>
+          <td data-label="Status"><button class="pay-btn" onclick="payNow('Deepak Rawat', 600)">Pay</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <button class="back-btn" onclick="window.location.href='index.html'">Back to Home</button>
+  </div>
+  <script>
+    function payNow(labourer, amount) {
+      localStorage.setItem('paymentLabourer', labourer);
+      localStorage.setItem('paymentAmount', amount);
+      window.location.href = 'payment.html';
+    }
+  </script>
+</body>
+</html> 

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: #fff;
+            padding: 2rem 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+            max-width: 370px;
+            width: 100%;
+            animation: fadeIn 0.7s cubic-bezier(.4,0,.2,1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #007bff;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        label {
+            font-weight: 500;
+        }
+        input[type="email"],
+        input[type="password"] {
+            padding: 0.6rem;
+            border: 1px solid #b3b3b3;
+            border-radius: 4px;
+            font-size: 1rem;
+            background: #f9f9f9;
+            transition: border 0.2s;
+        }
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border: 1.5px solid #007bff;
+            outline: none;
+        }
+        .error {
+            color: #d8000c;
+            background: #ffd2d2;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            display: none;
+        }
+        button {
+            padding: 0.75rem;
+            background: linear-gradient(90deg, #007bff 0%, #66a6ff 100%);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,123,255,0.08);
+            transition: background 0.2s, transform 0.1s;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #0056b3 0%, #66a6ff 100%);
+            transform: translateY(-2px) scale(1.03);
+        }
+        .register-link {
+            text-align: center;
+            margin-top: 1.2rem;
+        }
+        .register-link a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 500px) {
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <div id="loginError" class="error"></div>
+        <form id="loginForm" novalidate>
+            <label for="emailLogin">Email</label>
+            <input type="email" id="emailLogin" name="email" required autocomplete="username">
+
+            <label for="passwordLogin">Password</label>
+            <input type="password" id="passwordLogin" name="password" required autocomplete="current-password">
+
+            <button type="submit" id="loginBtn">Login</button>
+        </form>
+        <div class="register-link">
+            Don't have an account? <a href="register.html">Register</a>
+        </div>
+    </div>
+    <!-- Supabase Client -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
+    <!-- Your Supabase Config -->
+    <script src="supabase-config.js"></script>
+    
+    <!-- Your API Functions -->
+    <script src="supabase-api.js"></script>
+    
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const emailLogin = document.getElementById('emailLogin');
+        const passwordLogin = document.getElementById('passwordLogin');
+        const loginError = document.getElementById('loginError');
+        const container = document.querySelector('.container');
+        const loginBtn = document.getElementById('loginBtn');
+
+        // Initialize Supabase API
+        let api;
+        try {
+            api = new SupabaseAPI();
+        } catch (error) {
+            console.error('Failed to initialize Supabase API:', error);
+            showLoginError('Failed to initialize application. Please refresh the page.');
+            // Don't return here, just continue without API
+        }
+
+        // Check if user is already logged in
+        async function checkAuthStatus() {
+            if (!api) {
+                console.log('API not available, skipping auth check');
+                return;
+            }
+            
+            try {
+                const { user, error } = await api.getCurrentUser();
+                if (user) {
+                    // Redirect based on user type
+                    const userProfile = await api.getUserProfile(user.id);
+                    if (userProfile.data) {
+                        switch(userProfile.data.user_type) {
+                            case 'admin':
+                                window.location.href = 'admin-dashboard.html';
+                                break;
+                            case 'labour':
+                                window.location.href = 'labour-dashboard.html';
+                                break;
+                            default:
+                                window.location.href = 'index.html';
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Auth check error:', error);
+            }
+        }
+
+        // Check auth status on page load
+        checkAuthStatus();
+
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            loginError.style.display = 'none';
+            loginError.textContent = '';
+
+            if (!api) {
+                showLoginError('Application not initialized. Please refresh the page.');
+                return;
+            }
+
+            const email = emailLogin.value.trim();
+            const password = passwordLogin.value;
+
+            if (!email || !password) {
+                showLoginError('Email and password are required.');
+                return;
+            }
+
+            // Disable button and show loading
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Logging in...';
+
+            try {
+                const { data, error } = await api.signIn(email, password);
+                
+                if (error) {
+                    if (error.message.includes('Email not confirmed')) {
+                        showLoginError('Please check your email and click the confirmation link before logging in.');
+                    } else {
+                        showLoginError(error.message || 'Login failed. Please try again.');
+                    }
+                    return;
+                }
+
+                if (data.user) {
+                    // Get user profile to determine redirect
+                    const { data: profileData } = await api.getUserProfile(data.user.id);
+                    
+                    // Show success animation
+                    container.classList.add('fade-out');
+                    
+                    setTimeout(() => {
+                        // Redirect based on user type
+                        if (profileData && profileData.user_type) {
+                            switch(profileData.user_type) {
+                                case 'admin':
+                                    window.location.href = 'admin-dashboard.html';
+                                    break;
+                                case 'labour':
+                                    window.location.href = 'labour-dashboard.html';
+                                    break;
+                                default:
+                                    window.location.href = 'index.html';
+                            }
+                        } else {
+                            window.location.href = 'index.html';
+                        }
+                    }, 600);
+                }
+            } catch (error) {
+                showLoginError('An unexpected error occurred. Please try again.');
+                console.error('Login error:', error);
+            } finally {
+                // Re-enable button
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Login';
+            }
+        });
+
+        function showLoginError(message) {
+            loginError.textContent = message;
+            loginError.style.display = 'block';
+        }
+    </script>
+</body>
+</html> 

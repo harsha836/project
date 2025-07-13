@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Bookings with Auth</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        button { 
+            padding: 10px 20px; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            margin: 10px 5px;
+            border-radius: 4px;
+        }
+        .result { margin-top: 20px; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .form-group { margin-bottom: 15px; }
+        input { padding: 8px; margin: 5px 0; width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test Bookings with Authentication</h1>
+        
+        <h2>Step 1: Login</h2>
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" id="email" placeholder="your-email@example.com">
+        </div>
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" id="password" placeholder="your-password">
+        </div>
+        <button onclick="login()">Login</button>
+        <button onclick="logout()">Logout</button>
+        
+        <h2>Step 2: Test Bookings</h2>
+        <button onclick="checkAuth()">Check Authentication</button>
+        <button onclick="testBookings()">Test Bookings Access</button>
+        <button onclick="createBooking()">Create Booking</button>
+        <button onclick="getBookings()">Get My Bookings</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <!-- Supabase Client -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    
+    <script>
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Logging in...';
+            resultDiv.className = '';
+            
+            try {
+                const { data, error } = await window.supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
+                
+                if (error) {
+                    resultDiv.innerHTML = '❌ Login failed: ' + error.message;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = `
+                        ✅ Login successful!<br>
+                        User: ${data.user.email}<br>
+                        ID: ${data.user.id}
+                    `;
+                    resultDiv.className = 'success';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Login error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+        
+        async function logout() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Logging out...';
+            resultDiv.className = '';
+            
+            try {
+                const { error } = await window.supabase.auth.signOut();
+                
+                if (error) {
+                    resultDiv.innerHTML = '❌ Logout failed: ' + error.message;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = '✅ Logged out successfully!';
+                    resultDiv.className = 'success';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Logout error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+        
+        async function checkAuth() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Checking authentication...';
+            resultDiv.className = '';
+            
+            try {
+                const { data: { user }, error } = await window.supabase.auth.getUser();
+                
+                if (error) {
+                    resultDiv.innerHTML = '❌ Auth check failed: ' + error.message;
+                    resultDiv.className = 'error';
+                } else if (user) {
+                    resultDiv.innerHTML = `
+                        ✅ Authenticated!<br>
+                        User: ${user.email}<br>
+                        ID: ${user.id}
+                    `;
+                    resultDiv.className = 'success';
+                } else {
+                    resultDiv.innerHTML = 'ℹ️ Not authenticated. Please login first.';
+                    resultDiv.className = 'warning';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Auth error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+        
+        async function testBookings() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing bookings access...';
+            resultDiv.className = '';
+            
+            try {
+                const { data, error } = await window.supabase
+                    .from('bookings')
+                    .select('id')
+                    .limit(1);
+                
+                if (error) {
+                    resultDiv.innerHTML = '❌ Bookings access failed: ' + error.message;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = `
+                        ✅ Bookings access successful!<br>
+                        Found ${data.length} bookings
+                    `;
+                    resultDiv.className = 'success';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Bookings error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+        
+        async function createBooking() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Creating booking...';
+            resultDiv.className = '';
+            
+            try {
+                // Get current user
+                const { data: { user }, error: userError } = await window.supabase.auth.getUser();
+                
+                if (userError || !user) {
+                    resultDiv.innerHTML = '❌ Please login first';
+                    resultDiv.className = 'error';
+                    return;
+                }
+                
+                const bookingData = {
+                    customer_id: user.id,
+                    labour_id: user.id, // For testing, using same user
+                    booking_date: '2024-01-15',
+                    start_time: '09:00',
+                    end_time: '17:00',
+                    total_hours: 8.0,
+                    total_amount: 200.00,
+                    description: 'Test booking',
+                    location: 'Test location',
+                    status: 'pending'
+                };
+                
+                const { data, error } = await window.supabase
+                    .from('bookings')
+                    .insert(bookingData)
+                    .select();
+                
+                if (error) {
+                    resultDiv.innerHTML = '❌ Error creating booking: ' + error.message;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = `
+                        ✅ Booking created successfully!<br>
+                        Booking ID: ${data[0].id}<br>
+                        Date: ${data[0].booking_date}<br>
+                        Amount: $${data[0].total_amount}
+                    `;
+                    resultDiv.className = 'success';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+        
+        async function getBookings() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Getting your bookings...';
+            resultDiv.className = '';
+            
+            try {
+                const { data: { user }, error: userError } = await window.supabase.auth.getUser();
+                
+                if (userError || !user) {
+                    resultDiv.innerHTML = '❌ Please login first';
+                    resultDiv.className = 'error';
+                    return;
+                }
+                
+                const { data, error } = await window.supabase
+                    .from('bookings')
+                    .select('*')
+                    .eq('customer_id', user.id);
+                
+                if (error) {
+                    resultDiv.innerHTML = '❌ Error getting bookings: ' + error.message;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = `
+                        ✅ Found ${data.length} of your bookings<br>
+                        Data: ${JSON.stringify(data, null, 2)}
+                    `;
+                    resultDiv.className = 'success';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+    </script>
+</body>
+</html> 

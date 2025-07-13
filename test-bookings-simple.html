@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Bookings Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        button { 
+            padding: 10px 20px; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            margin: 10px 5px;
+            border-radius: 4px;
+        }
+        .result { margin-top: 20px; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simple Bookings Test</h1>
+        
+        <h2>Test 1: Check if bookings table exists</h2>
+        <button onclick="checkTable()">Check Bookings Table</button>
+        
+        <h2>Test 2: Create a simple booking</h2>
+        <button onclick="createSimpleBooking()">Create Test Booking</button>
+        
+        <h2>Test 3: Get all bookings</h2>
+        <button onclick="getAllBookings()">Get All Bookings</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <!-- Supabase Client -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    
+    <script>
+        async function checkTable() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Checking bookings table...';
+            resultDiv.className = '';
+            
+            try {
+                // Simple query to check if table exists
+                const { data, error } = await window.supabase
+                    .from('bookings')
+                    .select('id')
+                    .limit(1);
+                
+                if (error) {
+                    resultDiv.innerHTML = '❌ Bookings table error: ' + error.message;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = '✅ Bookings table exists and is accessible!';
+                    resultDiv.className = 'success';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+        
+        async function createSimpleBooking() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Creating test booking...';
+            resultDiv.className = '';
+            
+            try {
+                // Create a simple test booking
+                const testBooking = {
+                    customer_id: '00000000-0000-0000-0000-000000000000', // Placeholder
+                    labour_id: '00000000-0000-0000-0000-000000000000',   // Placeholder
+                    booking_date: '2024-01-15',
+                    start_time: '09:00',
+                    end_time: '17:00',
+                    total_hours: 8.0,
+                    total_amount: 200.00,
+                    description: 'Test booking',
+                    location: 'Test location',
+                    status: 'pending'
+                };
+                
+                const { data, error } = await window.supabase
+                    .from('bookings')
+                    .insert(testBooking)
+                    .select();
+                
+                if (error) {
+                    resultDiv.innerHTML = '❌ Error creating booking: ' + error.message;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = `
+                        ✅ Test booking created successfully!<br>
+                        Booking ID: ${data[0].id}<br>
+                        Date: ${data[0].booking_date}<br>
+                        Amount: $${data[0].total_amount}
+                    `;
+                    resultDiv.className = 'success';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+        
+        async function getAllBookings() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Getting all bookings...';
+            resultDiv.className = '';
+            
+            try {
+                const { data, error } = await window.supabase
+                    .from('bookings')
+                    .select('*');
+                
+                if (error) {
+                    resultDiv.innerHTML = '❌ Error getting bookings: ' + error.message;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = `
+                        ✅ Successfully retrieved ${data.length} bookings<br>
+                        Data: ${JSON.stringify(data, null, 2)}
+                    `;
+                    resultDiv.className = 'success';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix User Confirmation</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        input, button { padding: 10px; margin: 5px 0; width: 100%; }
+        button { background: #007bff; color: white; border: none; cursor: pointer; margin: 5px; }
+        .result { margin-top: 20px; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fix User Confirmation Issues</h1>
+        
+        <h2>Option 1: Create New Confirmed User</h2>
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" id="newEmail" value="testuser@example.com">
+        </div>
+        
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" id="newPassword" value="password123">
+        </div>
+        
+        <div class="form-group">
+            <label>Name:</label>
+            <input type="text" id="newName" value="Test User">
+        </div>
+        
+        <button onclick="createConfirmedUser()">Create Confirmed User</button>
+        
+        <h2>Option 2: Test Login with Existing User</h2>
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" id="loginEmail" value="jaisuri@gmail.com">
+        </div>
+        
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" id="loginPassword" value="your_password">
+        </div>
+        
+        <button onclick="testLogin()">Test Login</button>
+        
+        <h2>Option 3: Check Current User Status</h2>
+        <button onclick="checkCurrentUser()">Check Current User</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <!-- Supabase Client -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    
+    <script>
+        async function createConfirmedUser() {
+            const email = document.getElementById('newEmail').value;
+            const password = document.getElementById('newPassword').value;
+            const name = document.getElementById('newName').value;
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Creating confirmed user...';
+            resultDiv.className = '';
+            
+            try {
+                const { data, error } = await window.supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            full_name: name,
+                            user_type: 'customer'
+                        }
+                    }
+                });
+                
+                if (error) {
+                    resultDiv.innerHTML = 'Error: ' + error.message;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = `
+                        ✅ User created successfully!<br>
+                        User ID: ${data.user.id}<br>
+                        Email: ${data.user.email}<br>
+                        Confirmed: ${data.user.email_confirmed_at ? 'Yes' : 'No'}<br>
+                        <strong>Next Steps:</strong><br>
+                        1. Check your email for confirmation link<br>
+                        2. Click the confirmation link<br>
+                        3. Try logging in with these credentials
+                    `;
+                    resultDiv.className = 'success';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = 'Error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+        
+        async function testLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing login...';
+            resultDiv.className = '';
+            
+            try {
+                const { data, error } = await window.supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
+                
+                if (error) {
+                    resultDiv.innerHTML = `
+                        ❌ Login failed: ${error.message}<br><br>
+                        <strong>Solutions:</strong><br>
+                        1. Check your email and click the confirmation link<br>
+                        2. Or disable email confirmations in Supabase settings<br>
+                        3. Or create a new user with the form above
+                    `;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = `
+                        ✅ Login successful!<br>
+                        User: ${data.user.email}<br>
+                        ID: ${data.user.id}<br>
+                        Confirmed: ${data.user.email_confirmed_at ? 'Yes' : 'No'}
+                    `;
+                    resultDiv.className = 'success';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = 'Login Error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+        
+        async function checkCurrentUser() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Checking current user...';
+            resultDiv.className = '';
+            
+            try {
+                const { data: { user }, error } = await window.supabase.auth.getUser();
+                
+                if (error) {
+                    resultDiv.innerHTML = 'Error: ' + error.message;
+                    resultDiv.className = 'error';
+                } else if (user) {
+                    resultDiv.innerHTML = `
+                        ✅ Current user found:<br>
+                        Email: ${user.email}<br>
+                        ID: ${user.id}<br>
+                        Confirmed: ${user.email_confirmed_at ? 'Yes' : 'No'}<br>
+                        Created: ${new Date(user.created_at).toLocaleString()}
+                    `;
+                    resultDiv.className = 'success';
+                } else {
+                    resultDiv.innerHTML = 'No user currently logged in.';
+                    resultDiv.className = 'warning';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = 'Error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+    </script>
+</body>
+</html> 

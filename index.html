@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f4f8fb 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        /* Decorative background shapes */
+        .bg-shape1, .bg-shape2 {
+            position: absolute;
+            z-index: 0;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.25;
+        }
+        .bg-shape1 {
+            width: 400px;
+            height: 400px;
+            background: #7f9cf5;
+            top: -120px;
+            left: -120px;
+        }
+        .bg-shape2 {
+            width: 350px;
+            height: 350px;
+            background: #60a5fa;
+            bottom: -100px;
+            right: -100px;
+        }
+        .navbar {
+            background: #1e293b;
+            color: #fff;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            position: relative;
+            z-index: 2;
+        }
+        .navbar .logo {
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #60a5fa;
+            text-shadow: 0 2px 8px #7f9cf5, 0 1px 0 #fff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .navbar .logo::before {
+            content: '\1F527'; /* wrench emoji as icon */
+            font-size: 1.3rem;
+            vertical-align: middle;
+        }
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar li {
+            display: inline;
+        }
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: color 0.2s;
+            position: relative;
+        }
+        .navbar a::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: #60a5fa;
+            transition: width 0.3s;
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+        }
+        .navbar a:hover {
+            color: #60a5fa;
+        }
+        .navbar a:hover::after {
+            width: 100%;
+        }
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 4rem;
+            z-index: 1;
+            position: relative;
+        }
+        .dashboard-card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(96,165,250,0.10), 0 1.5px 8px rgba(30,41,59,0.08);
+            padding: 2.5rem 2.5rem 2rem 2.5rem;
+            min-width: 320px;
+            max-width: 420px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            animation: fadeInCard 0.8s cubic-bezier(.4,0,.2,1);
+        }
+        @keyframes fadeInCard {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .welcome {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #1e293b;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        .cta-btn {
+            background: linear-gradient(90deg, #007bff 0%, #60a5fa 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 1.1rem 2.7rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(96,165,250,0.13);
+            margin-top: 2rem;
+            transition: background 0.2s, transform 0.1s;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .cta-btn::before {
+            content: '\1F477'; /* construction worker emoji */
+            font-size: 1.3rem;
+        }
+        .cta-btn:hover {
+            background: linear-gradient(90deg, #0056b3 0%, #60a5fa 100%);
+            transform: translateY(-2px) scale(1.03);
+        }
+        @media (max-width: 600px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+                padding: 1rem;
+            }
+            .navbar ul {
+                gap: 1rem;
+            }
+            .dashboard {
+                margin-top: 2rem;
+            }
+            .dashboard-card {
+                padding: 1.2rem 0.7rem 1.2rem 0.7rem;
+                min-width: unset;
+                max-width: 98vw;
+            }
+            .welcome {
+                font-size: 1.3rem;
+            }
+            .cta-btn {
+                font-size: 1rem;
+                padding: 0.8rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">SKILL HIRE</div>
+        <ul>
+            <li><a href="labourers.html">View Labourers</a></li>
+            <li><a href="bookings.html">Bookings</a></li>
+            <li><a href="#" id="logoutLink">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="bg-shape1"></div>
+    <div class="bg-shape2"></div>
+    <div class="dashboard">
+        <div class="dashboard-card">
+            <div class="dashboard-illustration" style="width:100%;display:flex;justify-content:center;margin-bottom:1.2rem;">
+                <!-- Construction/Teamwork SVG illustration -->
+                <svg width="180" height="120" viewBox="0 0 180 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width:90%;height:auto;">
+                  <ellipse cx="90" cy="110" rx="70" ry="10" fill="#e0e7ff"/>
+                  <rect x="40" y="60" width="20" height="40" rx="6" fill="#60a5fa"/>
+                  <rect x="120" y="60" width="20" height="40" rx="6" fill="#60a5fa"/>
+                  <rect x="80" y="40" width="20" height="60" rx="8" fill="#2563eb"/>
+                  <circle cx="90" cy="30" r="18" fill="#fbbf24" stroke="#2563eb" stroke-width="3"/>
+                  <ellipse cx="90" cy="30" rx="10" ry="7" fill="#fffde7"/>
+                  <rect x="70" y="80" width="40" height="10" rx="5" fill="#fbbf24"/>
+                  <rect x="60" y="100" width="60" height="8" rx="4" fill="#7f9cf5"/>
+                  <rect x="85" y="55" width="10" height="20" rx="3" fill="#fff"/>
+                  <rect x="95" y="55" width="10" height="20" rx="3" fill="#fff"/>
+                  <rect x="75" y="55" width="10" height="20" rx="3" fill="#fff"/>
+                  <rect x="105" y="55" width="10" height="20" rx="3" fill="#fff"/>
+                  <rect x="80" y="70" width="20" height="8" rx="4" fill="#fbbf24"/>
+                </svg>
+            </div>
+            <div class="welcome">Welcome to your Dashboard!</div>
+            <button class="cta-btn" onclick="window.location.href='labourers.html'">Find Labour Now</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById('logoutLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            // Simulate logout by redirecting to login.html
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html> 

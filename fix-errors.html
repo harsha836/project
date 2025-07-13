@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Supabase Errors</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        button { 
+            padding: 10px 20px; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            margin: 10px 5px;
+            border-radius: 4px;
+        }
+        .result { margin-top: 20px; padding: 10px; border-radius: 5px; white-space: pre-wrap; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .form-group { margin-bottom: 15px; }
+        input { padding: 8px; margin: 5px 0; width: 100%; }
+        .solution { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fix Supabase Errors (422 & 409)</h1>
+        
+        <div class="solution">
+            <h3>🔧 Error 422 (Signup Issues)</h3>
+            <p><strong>Common Causes:</strong></p>
+            <ul>
+                <li>Email already exists</li>
+                <li>Password too weak</li>
+                <li>Invalid email format</li>
+                <li>Email confirmation required</li>
+            </ul>
+        </div>
+        
+        <div class="solution">
+            <h3>🔧 Error 409 (Booking Issues)</h3>
+            <p><strong>Common Causes:</strong></p>
+            <ul>
+                <li>RLS (Row Level Security) blocking access</li>
+                <li>Foreign key constraint violations</li>
+                <li>Duplicate data</li>
+                <li>Not authenticated</li>
+            </ul>
+        </div>
+        
+        <h2>Step 1: Fix Email Confirmation</h2>
+        <button onclick="disableEmailConfirm()">Disable Email Confirmation</button>
+        <p><small>This will allow signups without email verification</small></p>
+        
+        <h2>Step 2: Fix RLS Policies</h2>
+        <button onclick="disableRLS()">Disable RLS Temporarily</button>
+        <p><small>This will allow database access without authentication</small></p>
+        
+        <h2>Step 3: Test Fixed Signup</h2>
+        <div class="form-group">
+            <label>Email (use unique email):</label>
+            <input type="email" id="fixEmail" value="test123@example.com">
+        </div>
+        <div class="form-group">
+            <label>Password (min 6 chars):</label>
+            <input type="password" id="fixPassword" value="password123">
+        </div>
+        <button onclick="testFixedSignup()">Test Fixed Signup</button>
+        
+        <h2>Step 4: Test Fixed Booking</h2>
+        <button onclick="testFixedBooking()">Test Booking Creation</button>
+        
+        <h2>Step 5: Check Current Status</h2>
+        <button onclick="checkStatus()">Check All Status</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <!-- Supabase Client -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    
+    <script>
+        async function disableEmailConfirm() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '⚠️ Note: Email confirmation settings must be changed in Supabase Dashboard\n\nGo to:\n1. Supabase Dashboard\n2. Authentication > Settings\n3. Disable "Enable email confirmations"\n4. Save changes\n\nThis will fix 422 errors during signup.';
+            resultDiv.className = 'warning';
+        }
+        
+        async function disableRLS() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '⚠️ Note: RLS settings must be changed in Supabase Dashboard\n\nGo to:\n1. Supabase Dashboard\n2. Database > Tables\n3. Select your table (users/bookings)\n4. Go to "RLS" tab\n5. Toggle "Enable RLS" to OFF\n6. Save changes\n\nThis will fix 409 errors when accessing data.';
+            resultDiv.className = 'warning';
+        }
+        
+        async function testFixedSignup() {
+            const email = document.getElementById('fixEmail').value;
+            const password = document.getElementById('fixPassword').value;
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing fixed signup...';
+            resultDiv.className = '';
+            
+            try {
+                const { data, error } = await window.supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            full_name: 'Fixed User',
+                            user_type: 'customer'
+                        }
+                    }
+                });
+                
+                if (error) {
+                    resultDiv.innerHTML = `❌ Still getting error: ${error.message}\n\nTry these fixes:\n1. Use a different email address\n2. Make password at least 6 characters\n3. Disable email confirmation in Supabase Dashboard\n4. Check if email format is valid`;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = `✅ Signup successful!\nUser ID: ${data.user.id}\nEmail: ${data.user.email}\n\nNow you can use this user ID for bookings!`;
+                    resultDiv.className = 'success';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Exception: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+        
+        async function testFixedBooking() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing booking creation...';
+            resultDiv.className = '';
+            
+            try {
+                // First, try to get a user ID
+                const { data: users, error: usersError } = await window.supabase
+                    .from('users')
+                    .select('id')
+                    .limit(1);
+                
+                if (usersError) {
+                    resultDiv.innerHTML = `❌ Cannot access users: ${usersError.message}\n\nFix: Disable RLS on users table in Supabase Dashboard`;
+                    resultDiv.className = 'error';
+                    return;
+                }
+                
+                if (!users || users.length === 0) {
+                    resultDiv.innerHTML = '❌ No users found. Create a user first using the signup test above.';
+                    resultDiv.className = 'error';
+                    return;
+                }
+                
+                const userId = users[0].id;
+                
+                // Try to create a booking
+                const bookingData = {
+                    customer_id: userId,
+                    labour_id: userId, // Using same user for both
+                    booking_date: '2024-01-15',
+                    start_time: '09:00',
+                    end_time: '17:00',
+                    total_hours: 8.0,
+                    total_amount: 200.00,
+                    description: 'Fixed test booking',
+                    location: 'Test location',
+                    status: 'pending'
+                };
+                
+                const { data, error } = await window.supabase
+                    .from('bookings')
+                    .insert(bookingData)
+                    .select();
+                
+                if (error) {
+                    resultDiv.innerHTML = `❌ Booking error: ${error.message}\n\nFix: Disable RLS on bookings table in Supabase Dashboard`;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = `✅ Booking created successfully!\nBooking ID: ${data[0].id}\nCustomer ID: ${data[0].customer_id}\nAmount: $${data[0].total_amount}`;
+                    resultDiv.className = 'success';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Exception: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+        
+        async function checkStatus() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Checking current status...';
+            resultDiv.className = '';
+            
+            try {
+                // Check authentication
+                const { data: { user } } = await window.supabase.auth.getUser();
+                
+                // Check tables
+                const { data: users, error: usersError } = await window.supabase
+                    .from('users')
+                    .select('count')
+                    .limit(1);
+                
+                const { data: bookings, error: bookingsError } = await window.supabase
+                    .from('bookings')
+                    .select('count')
+                    .limit(1);
+                
+                let result = '📊 Current Status:\n\n';
+                
+                if (user) {
+                    result += `✅ Authenticated as: ${user.email}\n`;
+                } else {
+                    result += `❌ Not authenticated\n`;
+                }
+                
+                if (usersError) {
+                    result += `❌ Users table: ${usersError.message}\n`;
+                } else {
+                    result += `✅ Users table accessible\n`;
+                }
+                
+                if (bookingsError) {
+                    result += `❌ Bookings table: ${bookingsError.message}\n`;
+                } else {
+                    result += `✅ Bookings table accessible\n`;
+                }
+                
+                resultDiv.innerHTML = result;
+                resultDiv.className = usersError || bookingsError ? 'error' : 'success';
+                
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+    </script>
+</body>
+</html> 

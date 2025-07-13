@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Bookings | SKILL HIRE</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(120deg, #e0e7ff 0%, #f4f8fb 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 2.5rem auto 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(96,165,250,0.10), 0 1.5px 8px rgba(30,41,59,0.08);
+      padding: 2.5rem 2rem 2rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      text-align: center;
+      color: #2563eb;
+      font-size: 2.1rem;
+      margin-bottom: 2rem;
+      letter-spacing: 1px;
+    }
+    .top-bar {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .back-btn {
+      background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.8rem 2.2rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(96,165,250,0.13);
+      letter-spacing: 1px;
+      transition: background 0.2s, transform 0.1s;
+      display: block;
+    }
+    .back-btn:hover {
+      background: linear-gradient(90deg, #1e40af 0%, #60a5fa 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    .filter-dropdown {
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      border: 1.5px solid #b3b3b3;
+      font-size: 1rem;
+      background: #f9f9f9;
+      color: #222;
+      font-family: inherit;
+      transition: border 0.2s;
+    }
+    .filter-dropdown:focus {
+      border: 1.5px solid #2563eb;
+      outline: none;
+    }
+    .responsive-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(96,165,250,0.06);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .responsive-table th, .responsive-table td {
+      padding: 1rem 0.7rem;
+      text-align: center;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 1rem;
+    }
+    .responsive-table th {
+      background: #f1f5f9;
+      color: #1e293b;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .responsive-table tr:nth-child(even) {
+      background: #f8fafc;
+    }
+    .responsive-table tr:nth-child(odd) {
+      background: #fff;
+    }
+    .status-tag {
+      display: inline-block;
+      padding: 0.4em 1em;
+      border-radius: 12px;
+      font-size: 0.98em;
+      font-weight: 600;
+      color: #fff;
+    }
+    .status-pending {
+      background: #fbbf24;
+      color: #fff;
+    }
+    .status-confirmed {
+      background: #22c55e;
+      color: #fff;
+    }
+    .status-cancelled {
+      background: #ef4444;
+      color: #fff;
+    }
+    .payment-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3em;
+      padding: 0.4em 1em;
+      border-radius: 12px;
+      font-size: 0.98em;
+      font-weight: 600;
+    }
+    .payment-paid {
+      background: #2563eb;
+      color: #fff;
+    }
+    .payment-unpaid {
+      background: #f87171;
+      color: #fff;
+    }
+    .payment-tag .icon {
+      font-size: 1.1em;
+    }
+    @media (max-width: 900px) {
+      .container {
+        padding: 1.2rem 0.2rem 1.2rem 0.2rem;
+      }
+      .responsive-table th, .responsive-table td {
+        padding: 0.7rem 0.2rem;
+        font-size: 0.95rem;
+      }
+      h1 {
+        font-size: 1.3rem;
+      }
+    }
+    @media (max-width: 600px) {
+      .responsive-table, .responsive-table thead, .responsive-table tbody, .responsive-table th, .responsive-table td, .responsive-table tr {
+        display: block;
+      }
+      .responsive-table thead tr {
+        display: none;
+      }
+      .responsive-table tr {
+        margin-bottom: 1.2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(96,165,250,0.06);
+        background: #fff;
+        padding: 0.7rem 0.2rem;
+      }
+      .responsive-table td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+        min-height: 2.2rem;
+      }
+      .responsive-table td:before {
+        position: absolute;
+        top: 0.7rem;
+        left: 1rem;
+        width: 45%;
+        white-space: nowrap;
+        font-weight: 700;
+        color: #2563eb;
+        content: attr(data-label);
+      }
+      .top-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-bar">
+      <button class="back-btn" onclick="window.location.href='admin-dashboard.html'">Back to Dashboard</button>
+      <select class="filter-dropdown" id="statusFilter" onchange="filterTable()">
+        <option value="all">All</option>
+        <option value="confirmed">Confirmed</option>
+        <option value="pending">Pending</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+    <h1>All Bookings</h1>
+    <table class="responsive-table" id="bookingsTable">
+      <thead>
+        <tr>
+          <th>Booking ID</th>
+          <th>Client Name</th>
+          <th>Labourer Name</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Status</th>
+          <th>Payment Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-status="confirmed">
+          <td data-label="Booking ID">BKG201</td>
+          <td data-label="Client Name">Rahul Mehra</td>
+          <td data-label="Labourer Name">Ravi Kumar</td>
+          <td data-label="Date">2024-07-01</td>
+          <td data-label="Time">10:00 AM</td>
+          <td data-label="Status"><span class="status-tag status-confirmed">Confirmed</span></td>
+          <td data-label="Payment Status"><span class="payment-tag payment-paid"><span class="icon">✔️</span>Paid</span></td>
+        </tr>
+        <tr data-status="pending">
+          <td data-label="Booking ID">BKG202</td>
+          <td data-label="Client Name">Priya Sharma</td>
+          <td data-label="Labourer Name">Amit Singh</td>
+          <td data-label="Date">2024-07-02</td>
+          <td data-label="Time">2:00 PM</td>
+          <td data-label="Status"><span class="status-tag status-pending">Pending</span></td>
+          <td data-label="Payment Status"><span class="payment-tag payment-unpaid"><span class="icon">✖️</span>Not Paid</span></td>
+        </tr>
+        <tr data-status="cancelled">
+          <td data-label="Booking ID">BKG203</td>
+          <td data-label="Client Name">Amit Singh</td>
+          <td data-label="Labourer Name">Priya Sharma</td>
+          <td data-label="Date">2024-07-03</td>
+          <td data-label="Time">11:30 AM</td>
+          <td data-label="Status"><span class="status-tag status-cancelled">Cancelled</span></td>
+          <td data-label="Payment Status"><span class="payment-tag payment-unpaid"><span class="icon">✖️</span>Not Paid</span></td>
+        </tr>
+        <tr data-status="confirmed">
+          <td data-label="Booking ID">BKG204</td>
+          <td data-label="Client Name">Meena Kumari</td>
+          <td data-label="Labourer Name">Sunil Joshi</td>
+          <td data-label="Date">2024-07-04</td>
+          <td data-label="Time">9:00 AM</td>
+          <td data-label="Status"><span class="status-tag status-confirmed">Confirmed</span></td>
+          <td data-label="Payment Status"><span class="payment-tag payment-paid"><span class="icon">✔️</span>Paid</span></td>
+        </tr>
+        <tr data-status="pending">
+          <td data-label="Booking ID">BKG205</td>
+          <td data-label="Client Name">Suresh Patel</td>
+          <td data-label="Labourer Name">Meena Kumari</td>
+          <td data-label="Date">2024-07-05</td>
+          <td data-label="Time">4:00 PM</td>
+          <td data-label="Status"><span class="status-tag status-pending">Pending</span></td>
+          <td data-label="Payment Status"><span class="payment-tag payment-unpaid"><span class="icon">✖️</span>Not Paid</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <script>
+    function filterTable() {
+      const filter = document.getElementById('statusFilter').value;
+      const rows = document.querySelectorAll('#bookingsTable tbody tr');
+      rows.forEach(row => {
+        if (filter === 'all' || row.getAttribute('data-status') === filter) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html> 

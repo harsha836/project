@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Labourer | SKILL HIRE</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(120deg, #e0e7ff 0%, #f4f8fb 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .booking-container {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px rgba(96,165,250,0.10), 0 1.5px 8px rgba(30,41,59,0.08);
+      padding: 2.5rem 2.5rem 2rem 2.5rem;
+      min-width: 320px;
+      max-width: 420px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      animation: fadeInCard 0.8s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes fadeInCard {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .booking-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #2563eb;
+      margin-bottom: 1.2rem;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .booking-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    label {
+      font-weight: 500;
+      color: #1e293b;
+      margin-bottom: 0.3rem;
+    }
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    textarea {
+      padding: 0.7rem;
+      border: 1.5px solid #b3b3b3;
+      border-radius: 6px;
+      font-size: 1rem;
+      background: #f9f9f9;
+      transition: border 0.2s;
+      width: 100%;
+      font-family: inherit;
+      resize: none;
+    }
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    input[type="time"]:focus,
+    textarea:focus {
+      border: 1.5px solid #2563eb;
+      outline: none;
+    }
+    input[readonly] {
+      background: #e0e7ff;
+      color: #64748b;
+      font-weight: 600;
+      cursor: not-allowed;
+    }
+    .confirm-btn {
+      background: linear-gradient(90deg, #007bff 0%, #60a5fa 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 1rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(96,165,250,0.13);
+      margin-top: 0.5rem;
+      letter-spacing: 1px;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .confirm-btn:hover {
+      background: linear-gradient(90deg, #0056b3 0%, #60a5fa 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    .error {
+      color: #d8000c;
+      background: #ffd2d2;
+      padding: 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+      display: none;
+      text-align: center;
+    }
+    .success-alert {
+      display: none;
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, #22c55e 0%, #4ade80 100%);
+      color: #fff;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(34,197,94,0.13);
+      z-index: 10;
+      animation: fadeInAlert 0.7s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes fadeInAlert {
+      from { opacity: 0; top: -80px; }
+      to { opacity: 1; top: -60px; }
+    }
+    @media (max-width: 600px) {
+      .booking-container {
+        padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+        min-width: unset;
+        max-width: 98vw;
+      }
+      .booking-title {
+        font-size: 1.3rem;
+      }
+      .success-alert {
+        font-size: 1rem;
+        padding: 0.7rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="booking-container">
+    <div class="success-alert" id="successAlert">Booking Confirmed! Redirecting...</div>
+    <div class="booking-title">Book Your Labourer</div>
+    <form class="booking-form" id="bookingForm" autocomplete="off">
+      <div>
+        <label for="labourerName">Labourer Name</label>
+        <input type="text" id="labourerName" name="labourerName" readonly>
+      </div>
+      <div>
+        <label for="date">Date</label>
+        <input type="date" id="date" name="date" required>
+      </div>
+      <div>
+        <label for="time">Time</label>
+        <input type="time" id="time" name="time" required>
+      </div>
+      <div>
+        <label for="address">Address</label>
+        <textarea id="address" name="address" rows="3" required placeholder="Enter address..."></textarea>
+      </div>
+      <div id="errorMsg" class="error"></div>
+      <button type="submit" class="confirm-btn">Confirm Booking</button>
+    </form>
+  </div>
+  <script>
+    // Prefill Labourer Name from localStorage
+    const labourerNameInput = document.getElementById('labourerName');
+    const selectedWorker = localStorage.getItem('selectedWorker');
+    if (selectedWorker) {
+      try {
+        const worker = JSON.parse(selectedWorker);
+        labourerNameInput.value = worker.name || '';
+      } catch {
+        labourerNameInput.value = '';
+      }
+    }
+
+    const bookingForm = document.getElementById('bookingForm');
+    const errorMsg = document.getElementById('errorMsg');
+    const successAlert = document.getElementById('successAlert');
+
+    bookingForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      errorMsg.style.display = 'none';
+      errorMsg.textContent = '';
+
+      const name = labourerNameInput.value.trim();
+      const date = document.getElementById('date').value;
+      const time = document.getElementById('time').value;
+      const address = document.getElementById('address').value.trim();
+
+      if (!name || !date || !time || !address) {
+        showError('All fields are required.');
+        return;
+      }
+      // Show success alert
+      successAlert.style.display = 'block';
+      setTimeout(() => {
+        successAlert.style.display = 'none';
+        window.location.href = 'bookings.html';
+      }, 1500);
+    });
+
+    function showError(message) {
+      errorMsg.textContent = message;
+      errorMsg.style.display = 'block';
+    }
+  </script>
+</body>
+</html> 

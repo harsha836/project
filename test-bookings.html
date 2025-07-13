@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Bookings</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select, textarea { 
+            padding: 10px; 
+            margin: 5px 0; 
+            width: 100%; 
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button { 
+            padding: 10px 20px; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            margin: 5px;
+            border-radius: 4px;
+        }
+        .result { margin-top: 20px; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .booking-list { margin-top: 20px; }
+        .booking-item { 
+            padding: 15px; 
+            margin: 10px 0; 
+            border: 1px solid #ddd; 
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test Booking System</h1>
+        
+        <h2>Create New Booking</h2>
+        <form id="bookingForm">
+            <div class="form-group">
+                <label>Customer ID (User ID):</label>
+                <input type="text" id="customerId" placeholder="Enter customer user ID">
+            </div>
+            
+            <div class="form-group">
+                <label>Labour ID (User ID):</label>
+                <input type="text" id="labourId" placeholder="Enter labour user ID">
+            </div>
+            
+            <div class="form-group">
+                <label>Booking Date:</label>
+                <input type="date" id="bookingDate" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Start Time:</label>
+                <input type="time" id="startTime" required>
+            </div>
+            
+            <div class="form-group">
+                <label>End Time:</label>
+                <input type="time" id="endTime" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Total Hours:</label>
+                <input type="number" id="totalHours" step="0.5" placeholder="8.0" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Total Amount ($):</label>
+                <input type="number" id="totalAmount" step="0.01" placeholder="200.00" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Description:</label>
+                <textarea id="description" rows="3" placeholder="Describe the work needed"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Location:</label>
+                <input type="text" id="location" placeholder="123 Main St, City">
+            </div>
+            
+            <div class="form-group">
+                <label>Status:</label>
+                <select id="status">
+                    <option value="pending">Pending</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+            </div>
+            
+            <button type="submit">Create Booking</button>
+        </form>
+        
+        <h2>View All Bookings</h2>
+        <button onclick="loadBookings()">Load All Bookings</button>
+        <button onclick="loadMyBookings()">Load My Bookings</button>
+        
+        <div id="result"></div>
+        <div id="bookingList" class="booking-list"></div>
+    </div>
+
+    <!-- Supabase Client -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="supabase-api.js"></script>
+    
+    <script>
+        const api = new SupabaseAPI();
+        
+        // Set default date to today
+        document.getElementById('bookingDate').value = new Date().toISOString().split('T')[0];
+        
+        // Handle form submission
+        document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Creating booking...';
+            resultDiv.className = '';
+            
+            try {
+                const bookingData = {
+                    customer_id: document.getElementById('customerId').value,
+                    labour_id: document.getElementById('labourId').value,
+                    booking_date: document.getElementById('bookingDate').value,
+                    start_time: document.getElementById('startTime').value,
+                    end_time: document.getElementById('endTime').value,
+                    total_hours: parseFloat(document.getElementById('totalHours').value),
+                    total_amount: parseFloat(document.getElementById('totalAmount').value),
+                    description: document.getElementById('description').value,
+                    location: document.getElementById('location').value,
+                    status: document.getElementById('status').value
+                };
+                
+                const { data, error } = await api.createBooking(bookingData);
+                
+                if (error) {
+                    resultDiv.innerHTML = '❌ Error creating booking: ' + error.message;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = `
+                        ✅ Booking created successfully!<br>
+                        Booking ID: ${data[0].id}<br>
+                        Date: ${data[0].booking_date}<br>
+                        Amount: $${data[0].total_amount}<br>
+                        Status: ${data[0].status}
+                    `;
+                    resultDiv.className = 'success';
+                    
+                    // Clear form
+                    document.getElementById('bookingForm').reset();
+                    document.getElementById('bookingDate').value = new Date().toISOString().split('T')[0];
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        });
+        
+        async function loadBookings() {
+            const resultDiv = document.getElementById('result');
+            const bookingListDiv = document.getElementById('bookingList');
+            
+            resultDiv.innerHTML = 'Loading all bookings...';
+            resultDiv.className = '';
+            
+            try {
+                const { data, error } = await api.getAllBookings();
+                
+                if (error) {
+                    resultDiv.innerHTML = '❌ Error loading bookings: ' + error.message;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = `✅ Loaded ${data.length} bookings`;
+                    resultDiv.className = 'success';
+                    
+                    displayBookings(data);
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+        
+        async function loadMyBookings() {
+            const resultDiv = document.getElementById('result');
+            const bookingListDiv = document.getElementById('bookingList');
+            
+            resultDiv.innerHTML = 'Loading your bookings...';
+            resultDiv.className = '';
+            
+            try {
+                // Get current user
+                const { user, error: userError } = await api.getCurrentUser();
+                
+                if (userError || !user) {
+                    resultDiv.innerHTML = '❌ Please login first';
+                    resultDiv.className = 'error';
+                    return;
+                }
+                
+                const { data, error } = await api.getBookings(user.id, 'customer');
+                
+                if (error) {
+                    resultDiv.innerHTML = '❌ Error loading your bookings: ' + error.message;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = `✅ Loaded ${data.length} of your bookings`;
+                    resultDiv.className = 'success';
+                    
+                    displayBookings(data);
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+        
+        function displayBookings(bookings) {
+            const bookingListDiv = document.getElementById('bookingList');
+            
+            if (bookings.length === 0) {
+                bookingListDiv.innerHTML = '<p>No bookings found.</p>';
+                return;
+            }
+            
+            let html = '<h3>Bookings:</h3>';
+            
+            bookings.forEach(booking => {
+                html += `
+                    <div class="booking-item">
+                        <strong>Booking ID:</strong> ${booking.id}<br>
+                        <strong>Date:</strong> ${booking.booking_date}<br>
+                        <strong>Time:</strong> ${booking.start_time} - ${booking.end_time}<br>
+                        <strong>Hours:</strong> ${booking.total_hours}<br>
+                        <strong>Amount:</strong> $${booking.total_amount}<br>
+                        <strong>Status:</strong> ${booking.status}<br>
+                        <strong>Description:</strong> ${booking.description || 'N/A'}<br>
+                        <strong>Location:</strong> ${booking.location || 'N/A'}<br>
+                        <strong>Customer:</strong> ${booking.customer ? booking.customer.full_name : 'N/A'}<br>
+                        <strong>Labour:</strong> ${booking.labour ? booking.labour.full_name : 'N/A'}<br>
+                        <strong>Created:</strong> ${new Date(booking.created_at).toLocaleString()}
+                    </div>
+                `;
+            });
+            
+            bookingListDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html> 

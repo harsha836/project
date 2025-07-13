@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Labourers | SKILL HIRE</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(120deg, #e0e7ff 0%, #f4f8fb 100%);
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem 3rem 1rem;
+    }
+    h1 {
+      text-align: center;
+      color: #2563eb;
+      font-size: 2.3rem;
+      margin-bottom: 2.5rem;
+      letter-spacing: 2px;
+    }
+    .section {
+      margin-bottom: 2.5rem;
+    }
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 1.2rem;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+    .section-title.plumbers::before { content: '\1F6B0'; }
+    .section-title.carpenters::before { content: '\1F528'; }
+    .section-title.housekeepers::before { content: '\1F9F9'; }
+    .section-title.current::before { content: '\1F477'; }
+    .labourer-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+    }
+    .labourer-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(96,165,250,0.10), 0 1.5px 8px rgba(30,41,59,0.08);
+      padding: 1.2rem 1.2rem 1.5rem 1.2rem;
+      width: 220px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+    }
+    .labourer-card:hover {
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 8px 32px rgba(96,165,250,0.18), 0 2px 12px rgba(30,41,59,0.10);
+    }
+    .labourer-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 1rem;
+      border: 3px solid #60a5fa;
+      background: #e0e7ff;
+      box-shadow: 0 2px 8px #e0e7ff;
+    }
+    .labourer-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #2563eb;
+      margin-bottom: 0.3rem;
+      text-align: center;
+    }
+    .labourer-skill {
+      font-size: 1rem;
+      color: #1e293b;
+      margin-bottom: 0.2rem;
+      font-weight: 500;
+      text-align: center;
+    }
+    .labourer-city {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin-bottom: 0.7rem;
+      text-align: center;
+    }
+    .book-btn {
+      background: linear-gradient(90deg, #007bff 0%, #60a5fa 100%);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.6rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(96,165,250,0.13);
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 0.5rem;
+      letter-spacing: 1px;
+    }
+    .book-btn:hover {
+      background: linear-gradient(90deg, #0056b3 0%, #60a5fa 100%);
+      transform: translateY(-2px) scale(1.04);
+    }
+    @media (max-width: 900px) {
+      .labourer-list {
+        gap: 1.2rem;
+      }
+      .labourer-card {
+        width: 180px;
+        padding: 1rem 0.7rem 1.2rem 0.7rem;
+      }
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 1rem 0.2rem 2rem 0.2rem;
+      }
+      h1 {
+        font-size: 1.3rem;
+      }
+      .section-title {
+        font-size: 1.1rem;
+      }
+      .labourer-card {
+        width: 98vw;
+        max-width: 320px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Find & Book Labourers - SKILL HIRE</h1>
+    <!-- Plumbers Section -->
+    <div class="section">
+      <div class="section-title plumbers">Plumbers</div>
+      <div class="labourer-list">
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Plumber 1">
+          <div class="labourer-name">Ravi Kumar</div>
+          <div class="labourer-skill">Plumber</div>
+          <div class="labourer-city">Delhi</div>
+          <button class="book-btn" onclick="bookNow('Ravi Kumar','Plumber','Delhi')">Book Now</button>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/45.jpg" alt="Plumber 2">
+          <div class="labourer-name">Amit Singh</div>
+          <div class="labourer-skill">Plumber</div>
+          <div class="labourer-city">Mumbai</div>
+          <button class="book-btn" onclick="bookNow('Amit Singh','Plumber','Mumbai')">Book Now</button>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/women/65.jpg" alt="Plumber 3">
+          <div class="labourer-name">Priya Sharma</div>
+          <div class="labourer-skill">Plumber</div>
+          <div class="labourer-city">Bangalore</div>
+          <button class="book-btn" onclick="bookNow('Priya Sharma','Plumber','Bangalore')">Book Now</button>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/23.jpg" alt="Plumber 4">
+          <div class="labourer-name">Suresh Patel</div>
+          <div class="labourer-skill">Plumber</div>
+          <div class="labourer-city">Ahmedabad</div>
+          <button class="book-btn" onclick="bookNow('Suresh Patel','Plumber','Ahmedabad')">Book Now</button>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/56.jpg" alt="Plumber 5">
+          <div class="labourer-name">Manoj Verma</div>
+          <div class="labourer-skill">Plumber</div>
+          <div class="labourer-city">Chennai</div>
+          <button class="book-btn" onclick="bookNow('Manoj Verma','Plumber','Chennai')">Book Now</button>
+        </div>
+      </div>
+    </div>
+    <!-- Carpenters Section -->
+    <div class="section">
+      <div class="section-title carpenters">Carpenters</div>
+      <div class="labourer-list">
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/12.jpg" alt="Carpenter 1">
+          <div class="labourer-name">Sunil Joshi</div>
+          <div class="labourer-skill">Carpenter</div>
+          <div class="labourer-city">Pune</div>
+          <button class="book-btn" onclick="bookNow('Sunil Joshi','Carpenter','Pune')">Book Now</button>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/34.jpg" alt="Carpenter 2">
+          <div class="labourer-name">Rakesh Mehra</div>
+          <div class="labourer-skill">Carpenter</div>
+          <div class="labourer-city">Hyderabad</div>
+          <button class="book-btn" onclick="bookNow('Rakesh Mehra','Carpenter','Hyderabad')">Book Now</button>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/women/22.jpg" alt="Carpenter 3">
+          <div class="labourer-name">Anita Desai</div>
+          <div class="labourer-skill">Carpenter</div>
+          <div class="labourer-city">Kolkata</div>
+          <button class="book-btn" onclick="bookNow('Anita Desai','Carpenter','Kolkata')">Book Now</button>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/67.jpg" alt="Carpenter 4">
+          <div class="labourer-name">Vijay Chauhan</div>
+          <div class="labourer-skill">Carpenter</div>
+          <div class="labourer-city">Jaipur</div>
+          <button class="book-btn" onclick="bookNow('Vijay Chauhan','Carpenter','Jaipur')">Book Now</button>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Carpenter 5">
+          <div class="labourer-name">Meena Kumari</div>
+          <div class="labourer-skill">Carpenter</div>
+          <div class="labourer-city">Lucknow</div>
+          <button class="book-btn" onclick="bookNow('Meena Kumari','Carpenter','Lucknow')">Book Now</button>
+        </div>
+      </div>
+    </div>
+    <!-- House Keepers Section -->
+    <div class="section">
+      <div class="section-title housekeepers">House Keepers</div>
+      <div class="labourer-list">
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/women/12.jpg" alt="House Keeper 1">
+          <div class="labourer-name">Shalini Gupta</div>
+          <div class="labourer-skill">House Keeper</div>
+          <div class="labourer-city">Delhi</div>
+          <button class="book-btn" onclick="bookNow('Shalini Gupta','House Keeper','Delhi')">Book Now</button>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/78.jpg" alt="House Keeper 2">
+          <div class="labourer-name">Rajesh Yadav</div>
+          <div class="labourer-skill">House Keeper</div>
+          <div class="labourer-city">Mumbai</div>
+          <button class="book-btn" onclick="bookNow('Rajesh Yadav','House Keeper','Mumbai')">Book Now</button>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/women/33.jpg" alt="House Keeper 3">
+          <div class="labourer-name">Kavita Singh</div>
+          <div class="labourer-skill">House Keeper</div>
+          <div class="labourer-city">Bangalore</div>
+          <button class="book-btn" onclick="bookNow('Kavita Singh','House Keeper','Bangalore')">Book Now</button>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/women/55.jpg" alt="House Keeper 4">
+          <div class="labourer-name">Poonam Mishra</div>
+          <div class="labourer-skill">House Keeper</div>
+          <div class="labourer-city">Chennai</div>
+          <button class="book-btn" onclick="bookNow('Poonam Mishra','House Keeper','Chennai')">Book Now</button>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/90.jpg" alt="House Keeper 5">
+          <div class="labourer-name">Sanjay Sahu</div>
+          <div class="labourer-skill">House Keeper</div>
+          <div class="labourer-city">Hyderabad</div>
+          <button class="book-btn" onclick="bookNow('Sanjay Sahu','House Keeper','Hyderabad')">Book Now</button>
+        </div>
+      </div>
+    </div>
+    <!-- Current Workers Section -->
+    <div class="section">
+      <div class="section-title current">Current Workers</div>
+      <div class="labourer-list">
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/91.jpg" alt="Current Worker 1">
+          <div class="labourer-name">Deepak Rawat</div>
+          <div class="labourer-skill">Electrician</div>
+          <div class="labourer-city">Delhi</div>
+          <button class="book-btn" onclick="bookNow('Deepak Rawat','Electrician','Delhi')">Book Now</button>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/women/88.jpg" alt="Current Worker 2">
+          <div class="labourer-name">Nisha Jain</div>
+          <div class="labourer-skill">Painter</div>
+          <div class="labourer-city">Mumbai</div>
+          <button class="book-btn" onclick="bookNow('Nisha Jain','Painter','Mumbai')">Book Now</button>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/99.jpg" alt="Current Worker 3">
+          <div class="labourer-name">Arun Kumar</div>
+          <div class="labourer-skill">Welder</div>
+          <div class="labourer-city">Bangalore</div>
+          <button class="book-btn" onclick="bookNow('Arun Kumar','Welder','Bangalore')">Book Now</button>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/women/99.jpg" alt="Current Worker 4">
+          <div class="labourer-name">Sakshi Agarwal</div>
+          <div class="labourer-skill">Mason</div>
+          <div class="labourer-city">Kolkata</div>
+          <button class="book-btn" onclick="bookNow('Sakshi Agarwal','Mason','Kolkata')">Book Now</button>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/77.jpg" alt="Current Worker 5">
+          <div class="labourer-name">Rohit Singh</div>
+          <div class="labourer-skill">Plumber</div>
+          <div class="labourer-city">Chennai</div>
+          <button class="book-btn" onclick="bookNow('Rohit Singh','Plumber','Chennai')">Book Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function bookNow(name, skill, city) {
+      const worker = { name, skill, city };
+      localStorage.setItem('selectedWorker', JSON.stringify(worker));
+      window.location.href = 'booking.html';
+    }
+  </script>
+</body>
+</html> 

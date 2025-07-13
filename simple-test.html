@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Supabase Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        input, button { padding: 10px; margin: 5px 0; width: 100%; }
+        button { background: #007bff; color: white; border: none; cursor: pointer; }
+        .result { margin-top: 20px; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simple Supabase Test</h1>
+        
+        <h2>Step 1: Create New User</h2>
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" id="email" value="newuser@test.com">
+        </div>
+        
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" id="password" value="password123">
+        </div>
+        
+        <button onclick="createUser()">Create User</button>
+        
+        <h2>Step 2: Test Login</h2>
+        <button onclick="testLogin()">Test Login with Same Credentials</button>
+        
+        <h2>Step 3: Check Status</h2>
+        <button onclick="checkStatus()">Check Current Status</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <!-- Supabase Client -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    
+    <script>
+        async function createUser() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Creating user...';
+            resultDiv.className = '';
+            
+            try {
+                const { data, error } = await window.supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            full_name: 'Test User',
+                            user_type: 'customer'
+                        }
+                    }
+                });
+                
+                if (error) {
+                    resultDiv.innerHTML = '❌ Error: ' + error.message;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = `
+                        ✅ User created successfully!<br>
+                        Email: ${data.user.email}<br>
+                        ID: ${data.user.id}<br>
+                        Confirmed: ${data.user.email_confirmed_at ? 'Yes' : 'No'}<br>
+                        <strong>Now try logging in!</strong>
+                    `;
+                    resultDiv.className = 'success';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+        
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing login...';
+            resultDiv.className = '';
+            
+            try {
+                const { data, error } = await window.supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
+                
+                if (error) {
+                    resultDiv.innerHTML = '❌ Login failed: ' + error.message;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = `
+                        ✅ Login successful!<br>
+                        User: ${data.user.email}<br>
+                        ID: ${data.user.id}<br>
+                        Session: ${data.session ? 'Active' : 'None'}
+                    `;
+                    resultDiv.className = 'success';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Login error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+        
+        async function checkStatus() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Checking status...';
+            resultDiv.className = '';
+            
+            try {
+                const { data: { user }, error } = await window.supabase.auth.getUser();
+                
+                if (error) {
+                    resultDiv.innerHTML = '❌ Error: ' + error.message;
+                    resultDiv.className = 'error';
+                } else if (user) {
+                    resultDiv.innerHTML = `
+                        ✅ User logged in:<br>
+                        Email: ${user.email}<br>
+                        ID: ${user.id}<br>
+                        Confirmed: ${user.email_confirmed_at ? 'Yes' : 'No'}
+                    `;
+                    resultDiv.className = 'success';
+                } else {
+                    resultDiv.innerHTML = 'ℹ️ No user currently logged in.';
+                    resultDiv.className = '';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+    </script>
+</body>
+</html> 

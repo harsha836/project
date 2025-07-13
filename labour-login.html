@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Labour Login | SKILL HIRE</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(120deg, #e0e7ff 0%, #f4f8fb 100%);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      background: #fff;
+      padding: 2.2rem 2rem 2rem 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(96,165,250,0.10), 0 1.5px 8px rgba(30,41,59,0.08);
+      max-width: 400px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeInCard 0.7s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes fadeInCard {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #2563eb;
+      letter-spacing: 1px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+    }
+    label {
+      font-weight: 500;
+      color: #1e293b;
+    }
+    input[type="email"],
+    input[type="password"] {
+      padding: 0.6rem;
+      border: 1.5px solid #b3b3b3;
+      border-radius: 6px;
+      font-size: 1rem;
+      background: #f9f9f9;
+      transition: border 0.2s;
+      width: 100%;
+      font-family: inherit;
+    }
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      border: 1.5px solid #2563eb;
+      outline: none;
+    }
+    .error {
+      color: #d8000c;
+      background: #ffd2d2;
+      padding: 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+      display: none;
+      text-align: center;
+    }
+    button {
+      padding: 0.8rem;
+      background: linear-gradient(90deg, #007bff 0%, #60a5fa 100%);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 0.5rem;
+      letter-spacing: 1px;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #0056b3 0%, #60a5fa 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    .register-link {
+      text-align: center;
+      margin-top: 1.2rem;
+    }
+    .register-link a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+    @media (max-width: 500px) {
+      .container {
+        padding: 1rem;
+      }
+      h2 {
+        font-size: 1.2rem;
+      }
+      button {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Labour Login</h2>
+    <div id="errorMsg" class="error"></div>
+    <form id="labourLoginForm" novalidate>
+      <label for="emailInput">Email</label>
+      <input type="email" id="emailInput" name="email" required>
+
+      <label for="passwordInput">Password</label>
+      <input type="password" id="passwordInput" name="password" required>
+
+      <button type="submit" id="loginBtn">Login</button>
+    </form>
+    <div class="register-link">
+      Not registered? <a href="labour-register.html">Register</a>
+    </div>
+  </div>
+  <script>
+    const form = document.getElementById('labourLoginForm');
+    const emailInput = document.getElementById('emailInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const errorMsg = document.getElementById('errorMsg');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      errorMsg.style.display = 'none';
+      errorMsg.textContent = '';
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        showError('Both fields are required.');
+        return;
+      }
+      // Success: Redirect to dashboard
+      window.location.href = 'labour-dashboard.html';
+    });
+
+    function showError(message) {
+      errorMsg.textContent = message;
+      errorMsg.style.display = 'block';
+    }
+  </script>
+</body>
+</html> 

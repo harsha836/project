@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Labourers | SKILL HIRE</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(120deg, #e0e7ff 0%, #f4f8fb 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 2.5rem auto 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(96,165,250,0.10), 0 1.5px 8px rgba(30,41,59,0.08);
+      padding: 2.5rem 2rem 2rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      text-align: center;
+      color: #2563eb;
+      font-size: 2.1rem;
+      margin-bottom: 2rem;
+      letter-spacing: 1px;
+    }
+    .labourer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      width: 100%;
+      justify-content: center;
+    }
+    .labourer-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(96,165,250,0.10), 0 1.5px 8px rgba(30,41,59,0.08);
+      padding: 1.5rem 1.2rem 1.5rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 0;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .labourer-card:hover {
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 8px 32px rgba(96,165,250,0.18), 0 2px 12px rgba(30,41,59,0.10);
+    }
+    .labourer-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 1rem;
+      border: 3px solid #60a5fa;
+      background: #e0e7ff;
+      box-shadow: 0 2px 8px #e0e7ff;
+    }
+    .labourer-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #2563eb;
+      margin-bottom: 0.3rem;
+      text-align: center;
+    }
+    .labourer-skill {
+      font-size: 1rem;
+      color: #1e293b;
+      margin-bottom: 0.2rem;
+      font-weight: 500;
+      text-align: center;
+    }
+    .labourer-city {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin-bottom: 0.7rem;
+      text-align: center;
+    }
+    .labourer-status {
+      font-size: 0.98rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      color: #22c55e;
+    }
+    .labourer-status.unavailable {
+      color: #ef4444;
+    }
+    .action-btn {
+      border: none;
+      border-radius: 6px;
+      padding: 0.6rem 1.4rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 0 0.2rem;
+      transition: background 0.2s, transform 0.1s, color 0.2s;
+      letter-spacing: 1px;
+    }
+    .approve-btn {
+      background: linear-gradient(90deg, #22c55e 0%, #4ade80 100%);
+      color: #fff;
+    }
+    .approve-btn:hover:not(:disabled) {
+      background: linear-gradient(90deg, #16a34a 0%, #4ade80 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    .deactivate-btn {
+      background: linear-gradient(90deg, #ef4444 0%, #f87171 100%);
+      color: #fff;
+    }
+    .deactivate-btn:hover:not(:disabled) {
+      background: linear-gradient(90deg, #b91c1c 0%, #f87171 100%);
+      color: #fff;
+      transform: translateY(-2px) scale(1.03);
+    }
+    .action-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    @media (max-width: 1000px) {
+      .labourer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 700px) {
+      .container {
+        padding: 1.2rem 0.2rem 1.2rem 0.2rem;
+      }
+      .labourer-grid {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+      }
+      h1 {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>All Labourers</h1>
+    <div class="labourer-grid">
+      <div class="labourer-card">
+        <img class="labourer-img" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Ravi Kumar">
+        <div class="labourer-name">Ravi Kumar</div>
+        <div class="labourer-skill">Plumber</div>
+        <div class="labourer-city">Delhi</div>
+        <div class="labourer-status">Available</div>
+        <button class="action-btn approve-btn" onclick="approveLabourer(this)">Approve</button>
+        <button class="action-btn deactivate-btn" onclick="deactivateLabourer(this)">Deactivate</button>
+      </div>
+      <div class="labourer-card">
+        <img class="labourer-img" src="https://randomuser.me/api/portraits/men/45.jpg" alt="Amit Singh">
+        <div class="labourer-name">Amit Singh</div>
+        <div class="labourer-skill">Electrician</div>
+        <div class="labourer-city">Mumbai</div>
+        <div class="labourer-status unavailable">Unavailable</div>
+        <button class="action-btn approve-btn" onclick="approveLabourer(this)">Approve</button>
+        <button class="action-btn deactivate-btn" onclick="deactivateLabourer(this)">Deactivate</button>
+      </div>
+      <div class="labourer-card">
+        <img class="labourer-img" src="https://randomuser.me/api/portraits/women/65.jpg" alt="Priya Sharma">
+        <div class="labourer-name">Priya Sharma</div>
+        <div class="labourer-skill">Mason</div>
+        <div class="labourer-city">Bangalore</div>
+        <div class="labourer-status">Available</div>
+        <button class="action-btn approve-btn" onclick="approveLabourer(this)">Approve</button>
+        <button class="action-btn deactivate-btn" onclick="deactivateLabourer(this)">Deactivate</button>
+      </div>
+      <div class="labourer-card">
+        <img class="labourer-img" src="https://randomuser.me/api/portraits/men/23.jpg" alt="Suresh Patel">
+        <div class="labourer-name">Suresh Patel</div>
+        <div class="labourer-skill">Carpenter</div>
+        <div class="labourer-city">Ahmedabad</div>
+        <div class="labourer-status unavailable">Unavailable</div>
+        <button class="action-btn approve-btn" onclick="approveLabourer(this)">Approve</button>
+        <button class="action-btn deactivate-btn" onclick="deactivateLabourer(this)">Deactivate</button>
+      </div>
+      <div class="labourer-card">
+        <img class="labourer-img" src="https://randomuser.me/api/portraits/men/56.jpg" alt="Manoj Verma">
+        <div class="labourer-name">Manoj Verma</div>
+        <div class="labourer-skill">Painter</div>
+        <div class="labourer-city">Chennai</div>
+        <div class="labourer-status">Available</div>
+        <button class="action-btn approve-btn" onclick="approveLabourer(this)">Approve</button>
+        <button class="action-btn deactivate-btn" onclick="deactivateLabourer(this)">Deactivate</button>
+      </div>
+      <div class="labourer-card">
+        <img class="labourer-img" src="https://randomuser.me/api/portraits/men/12.jpg" alt="Sunil Joshi">
+        <div class="labourer-name">Sunil Joshi</div>
+        <div class="labourer-skill">Welder</div>
+        <div class="labourer-city">Pune</div>
+        <div class="labourer-status">Available</div>
+        <button class="action-btn approve-btn" onclick="approveLabourer(this)">Approve</button>
+        <button class="action-btn deactivate-btn" onclick="deactivateLabourer(this)">Deactivate</button>
+      </div>
+      <div class="labourer-card">
+        <img class="labourer-img" src="https://randomuser.me/api/portraits/women/22.jpg" alt="Anita Desai">
+        <div class="labourer-name">Anita Desai</div>
+        <div class="labourer-skill">House Keeper</div>
+        <div class="labourer-city">Kolkata</div>
+        <div class="labourer-status unavailable">Unavailable</div>
+        <button class="action-btn approve-btn" onclick="approveLabourer(this)">Approve</button>
+        <button class="action-btn deactivate-btn" onclick="deactivateLabourer(this)">Deactivate</button>
+      </div>
+      <div class="labourer-card">
+        <img class="labourer-img" src="https://randomuser.me/api/portraits/men/67.jpg" alt="Vijay Chauhan">
+        <div class="labourer-name">Vijay Chauhan</div>
+        <div class="labourer-skill">Plumber</div>
+        <div class="labourer-city">Jaipur</div>
+        <div class="labourer-status">Available</div>
+        <button class="action-btn approve-btn" onclick="approveLabourer(this)">Approve</button>
+        <button class="action-btn deactivate-btn" onclick="deactivateLabourer(this)">Deactivate</button>
+      </div>
+      <div class="labourer-card">
+        <img class="labourer-img" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Meena Kumari">
+        <div class="labourer-name">Meena Kumari</div>
+        <div class="labourer-skill">Electrician</div>
+        <div class="labourer-city">Lucknow</div>
+        <div class="labourer-status">Available</div>
+        <button class="action-btn approve-btn" onclick="approveLabourer(this)">Approve</button>
+        <button class="action-btn deactivate-btn" onclick="deactivateLabourer(this)">Deactivate</button>
+      </div>
+      <div class="labourer-card">
+        <img class="labourer-img" src="https://randomuser.me/api/portraits/men/91.jpg" alt="Deepak Rawat">
+        <div class="labourer-name">Deepak Rawat</div>
+        <div class="labourer-skill">Painter</div>
+        <div class="labourer-city">Delhi</div>
+        <div class="labourer-status unavailable">Unavailable</div>
+        <button class="action-btn approve-btn" onclick="approveLabourer(this)">Approve</button>
+        <button class="action-btn deactivate-btn" onclick="deactivateLabourer(this)">Deactivate</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    function approveLabourer(btn) {
+      btn.disabled = true;
+      btn.textContent = 'Approved';
+      btn.style.background = 'linear-gradient(90deg, #22c55e 0%, #4ade80 100%)';
+      btn.style.cursor = 'not-allowed';
+    }
+    function deactivateLabourer(btn) {
+      btn.disabled = true;
+      btn.textContent = 'Deactivated';
+      btn.style.background = 'linear-gradient(90deg, #ef4444 0%, #f87171 100%)';
+      btn.style.cursor = 'not-allowed';
+    }
+  </script>
+</body>
+</html> 

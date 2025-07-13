@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment | SKILL HIRE</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(120deg, #e0e7ff 0%, #f4f8fb 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .payment-container {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px rgba(96,165,250,0.10), 0 1.5px 8px rgba(30,41,59,0.08);
+      padding: 2.5rem 2.5rem 2rem 2.5rem;
+      min-width: 320px;
+      max-width: 420px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      animation: fadeInCard 0.8s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes fadeInCard {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .payment-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #2563eb;
+      margin-bottom: 1.2rem;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .payment-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    label {
+      font-weight: 500;
+      color: #1e293b;
+      margin-bottom: 0.3rem;
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="radio"],
+    .amount-input {
+      padding: 0.7rem;
+      border: 1.5px solid #b3b3b3;
+      border-radius: 6px;
+      font-size: 1rem;
+      background: #f9f9f9;
+      transition: border 0.2s;
+      width: 100%;
+      font-family: inherit;
+      margin-bottom: 0.2rem;
+    }
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      border: 1.5px solid #2563eb;
+      outline: none;
+    }
+    input[readonly] {
+      background: #e0e7ff;
+      color: #64748b;
+      font-weight: 600;
+      cursor: not-allowed;
+    }
+    .payment-methods {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 0.2rem;
+      margin-bottom: 0.2rem;
+    }
+    .payment-methods label {
+      font-weight: 500;
+      color: #2563eb;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+    }
+    .pay-btn {
+      background: linear-gradient(90deg, #007bff 0%, #60a5fa 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 1rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(96,165,250,0.13);
+      margin-top: 0.5rem;
+      letter-spacing: 1px;
+      transition: background 0.2s, transform 0.1s;
+      width: 100%;
+    }
+    .pay-btn:hover {
+      background: linear-gradient(90deg, #0056b3 0%, #60a5fa 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    .back-btn {
+      margin-top: 1.5rem;
+      background: linear-gradient(90deg, #22c55e 0%, #4ade80 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.8rem 2.2rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(34,197,94,0.13);
+      letter-spacing: 1px;
+      transition: background 0.2s, transform 0.1s;
+      display: block;
+      width: 100%;
+    }
+    .back-btn:hover {
+      background: linear-gradient(90deg, #16a34a 0%, #4ade80 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    @media (max-width: 600px) {
+      .payment-container {
+        padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+        min-width: unset;
+        max-width: 98vw;
+      }
+      .payment-title {
+        font-size: 1.3rem;
+      }
+      .pay-btn, .back-btn {
+        font-size: 1rem;
+        padding: 0.8rem 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="payment-container">
+    <div class="payment-title">Payment</div>
+    <form class="payment-form" id="paymentForm" autocomplete="off">
+      <div>
+        <label for="labourerName">Labourer Name</label>
+        <input type="text" id="labourerName" name="labourerName" readonly>
+      </div>
+      <div>
+        <label for="amount">Amount</label>
+        <input type="text" id="amount" name="amount" class="amount-input" readonly>
+      </div>
+      <div>
+        <label>Payment Method</label>
+        <div class="payment-methods">
+          <label><input type="radio" name="paymentMethod" value="UPI" required> UPI</label>
+          <label><input type="radio" name="paymentMethod" value="Card" required> Card</label>
+        </div>
+      </div>
+      <button type="submit" class="pay-btn">Pay Now</button>
+    </form>
+    <button class="back-btn" onclick="window.location.href='index.html'">Back to Home</button>
+  </div>
+  <script>
+    // Prefill Labourer Name and Amount from localStorage
+    document.getElementById('labourerName').value = localStorage.getItem('paymentLabourer') || '';
+    document.getElementById('amount').value = localStorage.getItem('paymentAmount') ? '₹' + localStorage.getItem('paymentAmount') : '';
+
+    document.getElementById('paymentForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Payment Successful!');
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html> 

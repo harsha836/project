@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Test</title>
+</head>
+<body>
+    <h1>Supabase Connection Test</h1>
+    <div id="status"></div>
+    
+    <h2>Test Registration</h2>
+    <form id="testForm">
+        <input type="email" id="testEmail" placeholder="Email" value="test@example.com">
+        <input type="password" id="testPassword" placeholder="Password" value="password123">
+        <button type="submit">Test Registration</button>
+    </form>
+    
+    <div id="result"></div>
+
+    <!-- Supabase Client -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
+    <!-- Your Supabase Config -->
+    <script src="supabase-config.js"></script>
+    
+    <script>
+        const statusDiv = document.getElementById('status');
+        const resultDiv = document.getElementById('result');
+        const testForm = document.getElementById('testForm');
+        
+        // Test connection
+        async function testConnection() {
+            try {
+                // Wait for supabase to be available
+                let attempts = 0;
+                while (!window.supabase && attempts < 10) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    attempts++;
+                }
+                
+                if (!window.supabase) {
+                    statusDiv.innerHTML = '❌ Supabase client not available';
+                    return;
+                }
+                
+                statusDiv.innerHTML = '✅ Supabase client connected';
+                
+                // Test a simple query
+                const { data, error } = await window.supabase
+                    .from('users')
+                    .select('count')
+                    .limit(1);
+                
+                if (error) {
+                    statusDiv.innerHTML += '<br>❌ Database query failed: ' + error.message;
+                } else {
+                    statusDiv.innerHTML += '<br>✅ Database connection working';
+                }
+                
+            } catch (error) {
+                statusDiv.innerHTML = '❌ Connection test failed: ' + error.message;
+            }
+        }
+        
+        // Test registration
+        testForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+            
+            resultDiv.innerHTML = 'Testing registration...';
+            
+            try {
+                const { data, error } = await window.supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            full_name: 'Test User',
+                            user_type: 'customer'
+                        }
+                    }
+                });
+                
+                if (error) {
+                    resultDiv.innerHTML = '❌ Registration failed: ' + error.message;
+                } else {
+                    resultDiv.innerHTML = '✅ Registration successful! Check your email for confirmation.';
+                    console.log('Registration data:', data);
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Registration error: ' + error.message;
+            }
+        });
+        
+        // Run connection test
+        testConnection();
+    </script>
+</body>
+</html> 

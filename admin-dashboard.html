@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | SKILL HIRE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --accent: #60a5fa;
+      --bg: #f4f8fb;
+      --card-bg: #fff;
+      --shadow: 0 4px 24px rgba(96,165,250,0.10), 0 1.5px 8px rgba(30,41,59,0.08);
+      --radius: 16px;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --star: #fbbf24;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', Arial, sans-serif;
+      background: var(--bg);
+      color: #1e293b;
+      min-height: 100vh;
+    }
+    .bg-shape1, .bg-shape2 {
+      position: fixed;
+      z-index: 0;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.18;
+      pointer-events: none;
+    }
+    .bg-shape1 {
+      width: 400px;
+      height: 400px;
+      background: #7f9cf5;
+      top: -120px;
+      left: -120px;
+    }
+    .bg-shape2 {
+      width: 350px;
+      height: 350px;
+      background: #60a5fa;
+      bottom: -100px;
+      right: -100px;
+    }
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60px;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(30,41,59,0.07);
+    }
+    .navbar .nav-content {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+    }
+    .navbar .brand {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .navbar .brand::before {
+      content: '\1F527';
+      font-size: 1.2rem;
+    }
+    .navbar ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar li {
+      display: inline;
+    }
+    .navbar a, .navbar .active {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+    .navbar .active, .navbar a:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .navbar .logout {
+      cursor: pointer;
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 0.3rem 0.9rem;
+      margin-left: 1rem;
+      transition: background 0.2s;
+    }
+    .navbar .logout:hover {
+      background: #b91c1c;
+    }
+    .main {
+      margin-top: 80px;
+      width: 100%;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 2rem 1rem 2.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+      z-index: 1;
+    }
+    .welcome-section {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .welcome-section h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 0.3rem;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 8px #e0e7ff;
+    }
+    .welcome-section p {
+      color: #64748b;
+      font-size: 1.1rem;
+      margin: 0;
+    }
+    .dashboard-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      justify-content: center;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2.2rem 2.2rem 1.7rem 2.2rem;
+      min-width: 180px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      margin-bottom: 1rem;
+      animation: fadeInCard 0.8s cubic-bezier(.4,0,.2,1);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .card:hover {
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 8px 32px rgba(96,165,250,0.18), 0 2px 12px rgba(30,41,59,0.10);
+    }
+    .card .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+    .card .card-value {
+      font-size: 2.3rem;
+      font-weight: 800;
+      color: #1e293b;
+      margin-bottom: 0.2rem;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card.users .card-value::before {
+      content: '\1F465';
+      font-size: 2rem;
+      color: #60a5fa;
+    }
+    .card.labourers .card-value::before {
+      content: '\1F477';
+      font-size: 2rem;
+      color: #fbbf24;
+    }
+    .card.bookings .card-value::before {
+      content: '\1F4C5';
+      font-size: 2rem;
+      color: #22c55e;
+    }
+    .card.commission .card-value::before {
+      content: '\20B9';
+      font-size: 2rem;
+      color: #2563eb;
+    }
+    .commission-section {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2rem 2.2rem 2rem 2.2rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .commission-section h2 {
+      color: var(--primary);
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .commission-btn {
+      background: linear-gradient(90deg, #007bff 0%, #60a5fa 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.8rem 2.2rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(96,165,250,0.13);
+      letter-spacing: 1px;
+      transition: background 0.2s, transform 0.1s;
+      margin-bottom: 1.2rem;
+      margin-top: 0.5rem;
+    }
+    .commission-btn:hover {
+      background: linear-gradient(90deg, #0056b3 0%, #60a5fa 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    .charts-container {
+      display: flex;
+      width: 100%;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 1.2rem;
+    }
+    .chart-card {
+      background: #f8fafc;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(96,165,250,0.06);
+      padding: 1.2rem 1.2rem 1.2rem 1.2rem;
+      margin-bottom: 1rem;
+      width: 320px;
+      max-width: 98vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .labourer-section {
+      margin-top: 2.5rem;
+      width: 100%;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .labourer-section h2 {
+      color: var(--primary);
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      text-align: center;
+    }
+    .labourer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 2rem;
+      justify-content: center;
+    }
+    .labourer-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 1.2rem 1.2rem 1.5rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+      min-width: 0;
+    }
+    .labourer-card:hover {
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 8px 32px rgba(96,165,250,0.18), 0 2px 12px rgba(30,41,59,0.10);
+    }
+    .labourer-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 1rem;
+      border: 3px solid #60a5fa;
+      background: #e0e7ff;
+      box-shadow: 0 2px 8px #e0e7ff;
+    }
+    .labourer-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #2563eb;
+      margin-bottom: 0.3rem;
+      text-align: center;
+    }
+    .labourer-skill {
+      font-size: 1rem;
+      color: #1e293b;
+      margin-bottom: 0.2rem;
+      font-weight: 500;
+      text-align: center;
+    }
+    .labourer-city {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin-bottom: 0.7rem;
+      text-align: center;
+    }
+    .labourer-rating {
+      display: flex;
+      gap: 0.1rem;
+      margin-bottom: 0.2rem;
+      justify-content: center;
+    }
+    .star {
+      color: var(--star);
+      font-size: 1.1rem;
+    }
+    @media (max-width: 900px) {
+      .dashboard-cards {
+        gap: 1.2rem;
+      }
+      .main {
+        padding: 1rem 0.2rem 2rem 0.2rem;
+      }
+      .charts-container {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+    @media (max-width: 700px) {
+      .dashboard-cards {
+        grid-template-columns: 1fr;
+      }
+      .main {
+        margin-top: 70px;
+      }
+    }
+    @media (max-width: 500px) {
+      .navbar .nav-content {
+        padding: 0 0.5rem;
+      }
+      .main {
+        padding: 0.5rem 0.1rem 1rem 0.1rem;
+      }
+      .dashboard-title, .welcome-section h1 {
+        font-size: 1.1rem;
+      }
+      .card {
+        padding: 1.2rem 0.7rem 1.2rem 0.7rem;
+        min-width: unset;
+        max-width: 98vw;
+      }
+      .labourer-grid {
+        gap: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-shape1"></div>
+  <div class="bg-shape2"></div>
+  <nav class="navbar">
+    <div class="nav-content">
+      <div class="brand">SKILL HIRE</div>
+      <ul>
+        <li><span class="active">Dashboard</span></li>
+        <li><a href="admin-users.html">Users</a></li>
+        <li><a href="admin-labourers.html">Labourers</a></li>
+        <li><a href="admin-bookings.html">Bookings</a></li>
+        <li><button class="logout" onclick="window.location.href='admin-login.html'">Logout</button></li>
+      </ul>
+    </div>
+  </nav>
+  <main class="main">
+    <section class="welcome-section">
+      <h1>Welcome, Admin</h1>
+      <p>Here's your dashboard overview</p>
+    </section>
+    <section class="dashboard-cards">
+      <div class="card users">
+        <div class="card-title">Total Users</div>
+        <div class="card-value">20</div>
+      </div>
+      <div class="card labourers">
+        <div class="card-title">Total Labourers</div>
+        <div class="card-value">10</div>
+      </div>
+      <div class="card bookings">
+        <div class="card-title">Total Bookings</div>
+        <div class="card-value">50</div>
+      </div>
+      <div class="card commission">
+        <div class="card-title">Total Commission Earned</div>
+        <div class="card-value">₹1,00,000</div>
+      </div>
+    </section>
+    <section class="commission-section">
+      <h2>Commission Report</h2>
+      <button class="commission-btn" id="viewCommissionBtn">View Commission Details</button>
+      <div class="charts-container" id="chartsContainer">
+        <div class="chart-card">
+          <canvas id="pieChart" width="280" height="220"></canvas>
+        </div>
+        <div class="chart-card">
+          <canvas id="barChart" width="280" height="220"></canvas>
+        </div>
+      </div>
+    </section>
+    <section class="labourer-section">
+      <h2>Top Performing Labourers</h2>
+      <div class="labourer-grid">
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Ravi Kumar">
+          <div class="labourer-name">Ravi Kumar</div>
+          <div class="labourer-skill">Plumber</div>
+          <div class="labourer-city">Delhi</div>
+          <div class="labourer-rating">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">☆</span>
+          </div>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/45.jpg" alt="Amit Singh">
+          <div class="labourer-name">Amit Singh</div>
+          <div class="labourer-skill">Electrician</div>
+          <div class="labourer-city">Mumbai</div>
+          <div class="labourer-rating">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          </div>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/women/65.jpg" alt="Priya Sharma">
+          <div class="labourer-name">Priya Sharma</div>
+          <div class="labourer-skill">Mason</div>
+          <div class="labourer-city">Bangalore</div>
+          <div class="labourer-rating">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">☆</span>
+          </div>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/23.jpg" alt="Suresh Patel">
+          <div class="labourer-name">Suresh Patel</div>
+          <div class="labourer-skill">Carpenter</div>
+          <div class="labourer-city">Ahmedabad</div>
+          <div class="labourer-rating">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">☆</span><span class="star">☆</span>
+          </div>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/56.jpg" alt="Manoj Verma">
+          <div class="labourer-name">Manoj Verma</div>
+          <div class="labourer-skill">Painter</div>
+          <div class="labourer-city">Chennai</div>
+          <div class="labourer-rating">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">☆</span>
+          </div>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/12.jpg" alt="Sunil Joshi">
+          <div class="labourer-name">Sunil Joshi</div>
+          <div class="labourer-skill">Welder</div>
+          <div class="labourer-city">Pune</div>
+          <div class="labourer-rating">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          </div>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/women/22.jpg" alt="Anita Desai">
+          <div class="labourer-name">Anita Desai</div>
+          <div class="labourer-skill">House Keeper</div>
+          <div class="labourer-city">Kolkata</div>
+          <div class="labourer-rating">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">☆</span>
+          </div>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/67.jpg" alt="Vijay Chauhan">
+          <div class="labourer-name">Vijay Chauhan</div>
+          <div class="labourer-skill">Plumber</div>
+          <div class="labourer-city">Jaipur</div>
+          <div class="labourer-rating">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">☆</span><span class="star">☆</span>
+          </div>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Meena Kumari">
+          <div class="labourer-name">Meena Kumari</div>
+          <div class="labourer-skill">Electrician</div>
+          <div class="labourer-city">Lucknow</div>
+          <div class="labourer-rating">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          </div>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/men/91.jpg" alt="Deepak Rawat">
+          <div class="labourer-name">Deepak Rawat</div>
+          <div class="labourer-skill">Painter</div>
+          <div class="labourer-city">Delhi</div>
+          <div class="labourer-rating">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">☆</span>
+          </div>
+        </div>
+        <div class="labourer-card">
+          <img class="labourer-img" src="https://randomuser.me/api/portraits/women/88.jpg" alt="Nisha Jain">
+          <div class="labourer-name">Nisha Jain</div>
+          <div class="labourer-skill">Mason</div>
+          <div class="labourer-city">Mumbai</div>
+          <div class="labourer-rating">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    // Commission Report Chart.js logic - render on page load and show charts by default
+    window.onload = function() {
+      if (!window.pieChart) {
+        window.pieChart = new Chart(document.getElementById('pieChart'), {
+          type: 'pie',
+          data: {
+            labels: ['Electrician', 'Plumber', 'Mason', 'Carpenter', 'Painter'],
+            datasets: [{
+              data: [30000, 25000, 20000, 15000, 10000],
+              backgroundColor: ['#2563eb', '#60a5fa', '#fbbf24', '#22c55e', '#ef4444'],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            plugins: {
+              legend: { position: 'bottom' }
+            }
+          }
+        });
+      }
+      if (!window.barChart) {
+        window.barChart = new Chart(document.getElementById('barChart'), {
+          type: 'bar',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+            datasets: [{
+              label: 'Monthly Commission',
+              data: [12000, 15000, 18000, 14000, 16000, 17000, 13000],
+              backgroundColor: '#2563eb',
+              borderRadius: 8
+            }]
+          },
+          options: {
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              y: { beginAtZero: true }
+            }
+          }
+        });
+      }
+    };
+  </script>
+</body>
+</html> 

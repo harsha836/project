@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        label {
+            font-weight: 500;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .error {
+            color: #d8000c;
+            background: #ffd2d2;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            display: none;
+        }
+        button {
+            padding: 0.75rem;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .login-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 500px) {
+            .container {
+                padding: 1rem;
+            }
+        }
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Register</h2>
+        <div id="errorMsg" class="error"></div>
+        <form id="registerForm" novalidate>
+            <label for="nameInput">Full Name</label>
+            <input type="text" id="nameInput" name="name" required>
+
+            <label for="emailInput">Email</label>
+            <input type="email" id="emailInput" name="email" required>
+
+            <label for="passwordInput">Password</label>
+            <input type="password" id="passwordInput" name="password" required>
+
+            <label for="confirmInput">Confirm Password</label>
+            <input type="password" id="confirmInput" name="confirm" required>
+
+            <button type="submit" id="registerBtn">Register</button>
+        </form>
+        <div class="login-link">
+            Already have an account? <a href="login.html">Login</a>
+        </div>
+    </div>
+    <!-- Supabase Client -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
+    <!-- Your Supabase Config -->
+    <script src="supabase-config.js"></script>
+    
+    <!-- Your API Functions -->
+    <script src="supabase-api.js"></script>
+    
+    <script>
+        const form = document.getElementById('registerForm');
+        const nameInput = document.getElementById('nameInput');
+        const emailInput = document.getElementById('emailInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const confirmInput = document.getElementById('confirmInput');
+        const errorMsg = document.getElementById('errorMsg');
+        const registerBtn = document.getElementById('registerBtn');
+
+        // Initialize Supabase API
+        const api = new SupabaseAPI();
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            errorMsg.style.display = 'none';
+            errorMsg.textContent = '';
+
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            const confirm = confirmInput.value;
+
+            if (!name || !email || !password || !confirm) {
+                showError('All fields are required.');
+                return;
+            }
+            if (password.length < 6) {
+                showError('Password must be at least 6 characters.');
+                return;
+            }
+            if (password !== confirm) {
+                showError('Passwords do not match.');
+                return;
+            }
+
+            // Disable button and show loading
+            registerBtn.disabled = true;
+            registerBtn.textContent = 'Creating Account...';
+
+            try {
+                // Prepare user data
+                const userData = {
+                    email: email,
+                    full_name: name,
+                    phone: '',
+                    address: '',
+                    user_type: 'customer' // Default to customer
+                };
+
+                const { data, error } = await api.signUp(email, password, userData);
+                
+                if (error) {
+                    showError(error.message || 'Registration failed. Please try again.');
+                    return;
+                }
+
+                if (data.user) {
+                    // Show success message
+                    showSuccess('Account created successfully! Redirecting to login...');
+                    
+                    // Fade out and redirect to login
+                    document.querySelector('.container').classList.add('fade-out');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                }
+            } catch (error) {
+                showError('An unexpected error occurred. Please try again.');
+                console.error('Registration error:', error);
+            } finally {
+                // Re-enable button
+                registerBtn.disabled = false;
+                registerBtn.textContent = 'Register';
+            }
+        });
+
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+            errorMsg.style.background = '#ffd2d2';
+            errorMsg.style.color = '#d8000c';
+        }
+
+        function showSuccess(message) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+            errorMsg.style.background = '#d4edda';
+            errorMsg.style.color = '#155724';
+        }
+    </script>
+</body>
+</html> 

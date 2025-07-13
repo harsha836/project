@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Labour Dashboard | SKILL HIRE</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --accent: #60a5fa;
+      --bg: #f4f8fb;
+      --card-bg: #fff;
+      --shadow: 0 4px 24px rgba(96,165,250,0.10), 0 1.5px 8px rgba(30,41,59,0.08);
+      --radius: 16px;
+      --success: #22c55e;
+      --danger: #ef4444;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: #1e293b;
+    }
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60px;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(30,41,59,0.07);
+    }
+    .navbar .nav-content {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+    }
+    .navbar .brand {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .navbar .brand::before {
+      content: '\1F527';
+      font-size: 1.2rem;
+    }
+    .navbar ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar li {
+      display: inline;
+    }
+    .navbar a, .navbar .active {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+    .navbar .active, .navbar a:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .navbar .logout {
+      cursor: pointer;
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 0.3rem 0.9rem;
+      margin-left: 1rem;
+      transition: background 0.2s;
+    }
+    .navbar .logout:hover {
+      background: #b91c1c;
+    }
+    .main {
+      margin-top: 80px;
+      width: 100%;
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 2rem 1rem 2.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+    .welcome {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 1.2rem;
+      letter-spacing: 1px;
+      text-align: center;
+      text-shadow: 0 2px 8px #e0e7ff;
+    }
+    .dashboard-cards {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2rem 2.2rem 1.5rem 2.2rem;
+      min-width: 220px;
+      max-width: 320px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      margin-bottom: 1rem;
+      animation: fadeInCard 0.8s cubic-bezier(.4,0,.2,1);
+    }
+    .card .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+    .card .card-value {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: #1e293b;
+      margin-bottom: 0.2rem;
+      text-align: center;
+    }
+    .toggle-switch {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-top: 1.2rem;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 54px;
+      height: 28px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #e5e7eb;
+      border-radius: 34px;
+      transition: background 0.3s;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background: var(--primary);
+      border-radius: 50%;
+      transition: transform 0.3s, background 0.3s;
+    }
+    input:checked + .slider {
+      background: #bbf7d0;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+      background: var(--success);
+    }
+    .toggle-label {
+      font-weight: 600;
+      color: var(--success);
+      font-size: 1.1rem;
+      transition: color 0.3s;
+    }
+    .toggle-label.unavailable {
+      color: var(--danger);
+    }
+    .financial-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+    }
+    .financial-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2rem 2.2rem 1.5rem 2.2rem;
+      min-width: 260px;
+      max-width: 400px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      margin-bottom: 1rem;
+      animation: fadeInCard 0.8s cubic-bezier(.4,0,.2,1);
+    }
+    .financial-card .summary-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+    .financial-card .summary-value {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: #1e293b;
+      margin-bottom: 0.2rem;
+      text-align: center;
+    }
+    .pay-btn {
+      background: linear-gradient(90deg, #007bff 0%, #60a5fa 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 1rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(96,165,250,0.13);
+      margin-top: 1.2rem;
+      letter-spacing: 1px;
+      transition: background 0.2s, transform 0.1s;
+      width: 100%;
+    }
+    .pay-btn:disabled {
+      background: #e5e7eb;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+    .pay-btn:hover:not(:disabled) {
+      background: linear-gradient(90deg, #0056b3 0%, #60a5fa 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    /* Decorative background shapes */
+    .bg-shape1, .bg-shape2 {
+      position: fixed;
+      z-index: 0;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.18;
+      pointer-events: none;
+    }
+    .bg-shape1 {
+      width: 400px;
+      height: 400px;
+      background: #7f9cf5;
+      top: -120px;
+      left: -120px;
+    }
+    .bg-shape2 {
+      width: 350px;
+      height: 350px;
+      background: #60a5fa;
+      bottom: -100px;
+      right: -100px;
+    }
+    @media (max-width: 900px) {
+      .dashboard-cards, .financial-summary {
+        gap: 1.2rem;
+      }
+      .main {
+        padding: 1rem 0.2rem 2rem 0.2rem;
+      }
+    }
+    @media (max-width: 700px) {
+      .dashboard-cards, .financial-summary {
+        flex-direction: column;
+        align-items: center;
+      }
+      .main {
+        margin-top: 70px;
+      }
+    }
+    @media (max-width: 500px) {
+      .navbar .nav-content {
+        padding: 0 0.5rem;
+      }
+      .main {
+        padding: 0.5rem 0.1rem 1rem 0.1rem;
+      }
+      .welcome {
+        font-size: 1.1rem;
+      }
+      .card, .financial-card {
+        padding: 1.2rem 0.7rem 1.2rem 0.7rem;
+        min-width: unset;
+        max-width: 98vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-shape1"></div>
+  <div class="bg-shape2"></div>
+  <nav class="navbar">
+    <div class="nav-content">
+      <div class="brand">SKILL HIRE</div>
+      <ul>
+        <li><span class="active">Dashboard</span></li>
+        <li><a href="labour-bookings.html">View Bookings</a></li>
+        <li><a href="labour-profile.html">Edit Profile</a></li>
+        <li><button class="logout" onclick="window.location.href='labour-login.html'">Logout</button></li>
+      </ul>
+    </div>
+  </nav>
+  <main class="main">
+    <div class="welcome" id="welcomeMsg">Welcome, <span id="labourerName">Labourer</span></div>
+    <section class="dashboard-cards">
+      <div class="card">
+        <div class="card-title">Total Jobs Assigned</div>
+        <div class="card-value" id="totalJobs">5</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Pending Jobs</div>
+        <div class="card-value" id="pendingJobs">2</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Availability Status</div>
+        <div class="toggle-switch">
+          <label class="switch">
+            <input type="checkbox" id="availabilityToggle" checked>
+            <span class="slider"></span>
+          </label>
+          <span class="toggle-label" id="availabilityLabel">Available</span>
+        </div>
+      </div>
+    </section>
+    <section class="financial-summary">
+      <div class="financial-card">
+        <div class="summary-title">Total Earnings</div>
+        <div class="summary-value" id="totalEarnings">₹25,000</div>
+      </div>
+      <div class="financial-card">
+        <div class="summary-title">Commission for SKILL HIRE</div>
+        <div class="summary-value" id="commission">₹2,500</div>
+      </div>
+      <div class="financial-card">
+        <div class="summary-title">Amount to Pay</div>
+        <div class="summary-value" id="amountToPay">₹2,500</div>
+        <button class="pay-btn" id="payBtn">Pay to Company</button>
+      </div>
+    </section>
+  </main>
+  <script>
+    // Optionally, fetch the labourer name from localStorage or set a default
+    document.getElementById('labourerName').textContent = localStorage.getItem('labourerName') || 'Labourer';
+
+    // Availability toggle logic
+    const toggle = document.getElementById('availabilityToggle');
+    const label = document.getElementById('availabilityLabel');
+    toggle.addEventListener('change', function() {
+      if (toggle.checked) {
+        label.textContent = 'Available';
+        label.classList.remove('unavailable');
+      } else {
+        label.textContent = 'Unavailable';
+        label.classList.add('unavailable');
+      }
+    });
+
+    // Pay to Company logic
+    const payBtn = document.getElementById('payBtn');
+    const amountToPay = document.getElementById('amountToPay');
+    payBtn.addEventListener('click', function() {
+      if (parseInt(amountToPay.textContent.replace(/[^\d]/g, '')) > 0) {
+        alert('Commission Paid Successfully!');
+        amountToPay.textContent = '₹0';
+        payBtn.disabled = true;
+      }
+    });
+  </script>
+</body>
+</html> 

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Database Tables</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        button { 
+            padding: 10px 20px; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            margin: 10px 5px;
+            border-radius: 4px;
+        }
+        .result { margin-top: 20px; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .table-status { 
+            padding: 10px; 
+            margin: 5px 0; 
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+        .exists { border-left-color: #28a745; background: #d4edda; }
+        .missing { border-left-color: #dc3545; background: #f8d7da; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fix Database Tables</h1>
+        
+        <h2>Step 1: Check Table Status</h2>
+        <button onclick="checkTables()">Check All Tables</button>
+        
+        <h2>Step 2: Create Missing Tables</h2>
+        <button onclick="createTables()">Create Missing Tables</button>
+        
+        <h2>Step 3: Test Database Connection</h2>
+        <button onclick="testConnection()">Test Connection</button>
+        
+        <div id="result"></div>
+        
+        <div id="tableStatus"></div>
+    </div>
+
+    <!-- Supabase Client -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    
+    <script>
+        async function checkTables() {
+            const resultDiv = document.getElementById('result');
+            const tableStatusDiv = document.getElementById('tableStatus');
+            
+            resultDiv.innerHTML = 'Checking tables...';
+            resultDiv.className = '';
+            
+            const tables = [
+                'users',
+                'labour_profiles', 
+                'bookings',
+                'payments',
+                'reviews'
+            ];
+            
+            let statusHtml = '<h3>Table Status:</h3>';
+            let allExist = true;
+            
+            for (const table of tables) {
+                try {
+                    const { data, error } = await window.supabase
+                        .from(table)
+                        .select('count')
+                        .limit(1);
+                    
+                    if (error) {
+                        statusHtml += `<div class="table-status missing">❌ ${table}: ${error.message}</div>`;
+                        allExist = false;
+                    } else {
+                        statusHtml += `<div class="table-status exists">✅ ${table}: Table exists</div>`;
+                    }
+                } catch (error) {
+                    statusHtml += `<div class="table-status missing">❌ ${table}: ${error.message}</div>`;
+                    allExist = false;
+                }
+            }
+            
+            tableStatusDiv.innerHTML = statusHtml;
+            
+            if (allExist) {
+                resultDiv.innerHTML = '✅ All tables exist! Database is ready.';
+                resultDiv.className = 'success';
+            } else {
+                resultDiv.innerHTML = '❌ Some tables are missing. Click "Create Missing Tables" to fix.';
+                resultDiv.className = 'error';
+            }
+        }
+        
+        async function createTables() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Creating tables... This may take a moment.';
+            resultDiv.className = 'warning';
+            
+            try {
+                // Create users table
+                const { error: usersError } = await window.supabase.rpc('exec_sql', {
+                    sql: `
+                        CREATE TABLE IF NOT EXISTS public.users (
+                            id UUID REFERENCES auth.users(id) PRIMARY KEY,
+                            email TEXT UNIQUE NOT NULL,
+                            full_name TEXT,
+                            phone TEXT,
+                            address TEXT,
+                            user_type TEXT CHECK (user_type IN ('admin', 'labour', 'customer')) DEFAULT 'customer',
+                            created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+                            updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+                        );
+                    `
+                });
+                
+                // Create labour_profiles table
+                const { error: labourError } = await window.supabase.rpc('exec_sql', {
+                    sql: `
+                        CREATE TABLE IF NOT EXISTS public.labour_profiles (
+                            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                            user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+                            skills TEXT[],
+                            hourly_rate DECIMAL(10,2),
+                            experience_years INTEGER,
+                            availability BOOLEAN DEFAULT true,
+                            rating DECIMAL(3,2) DEFAULT 0.0,
+                            total_bookings INTEGER DEFAULT 0,
+                            created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+                            updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+                        );
+                    `
+                });
+                
+                // Create bookings table
+                const { error: bookingsError } = await window.supabase.rpc('exec_sql', {
+                    sql: `
+                        CREATE TABLE IF NOT EXISTS public.bookings (
+                            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                            customer_id UUID REFERENCES public.users(id),
+                            labour_id UUID REFERENCES public.users(id),
+                            booking_date DATE NOT NULL,
+                            start_time TIME NOT NULL,
+                            end_time TIME NOT NULL,
+                            total_hours DECIMAL(4,2),
+                            total_amount DECIMAL(10,2),
+                            status TEXT CHECK (status IN ('pending', 'confirmed', 'completed', 'cancelled')) DEFAULT 'pending',
+                            description TEXT,
+                            location TEXT,
+                            created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+                            updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+                        );
+                    `
+                });
+                
+                // Create payments table
+                const { error: paymentsError } = await window.supabase.rpc('exec_sql', {
+                    sql: `
+                        CREATE TABLE IF NOT EXISTS public.payments (
+                            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                            booking_id UUID REFERENCES public.bookings(id) ON DELETE CASCADE,
+                            amount DECIMAL(10,2) NOT NULL,
+                            payment_method TEXT,
+                            payment_status TEXT CHECK (payment_status IN ('pending', 'completed', 'failed', 'refunded')) DEFAULT 'pending',
+                            transaction_id TEXT,
+                            created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+                        );
+                    `
+                });
+                
+                // Create reviews table
+                const { error: reviewsError } = await window.supabase.rpc('exec_sql', {
+                    sql: `
+                        CREATE TABLE IF NOT EXISTS public.reviews (
+                            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                            booking_id UUID REFERENCES public.bookings(id) ON DELETE CASCADE,
+                            reviewer_id UUID REFERENCES public.users(id),
+                            labour_id UUID REFERENCES public.users(id),
+                            rating INTEGER CHECK (rating >= 1 AND rating <= 5),
+                            comment TEXT,
+                            created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+                        );
+                    `
+                });
+                
+                if (usersError || labourError || bookingsError || paymentsError || reviewsError) {
+                    resultDiv.innerHTML = `
+                        ❌ Error creating tables:<br>
+                        Users: ${usersError || 'OK'}<br>
+                        Labour: ${labourError || 'OK'}<br>
+                        Bookings: ${bookingsError || 'OK'}<br>
+                        Payments: ${paymentsError || 'OK'}<br>
+                        Reviews: ${reviewsError || 'OK'}
+                    `;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = '✅ All tables created successfully!';
+                    resultDiv.className = 'success';
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+        
+        async function testConnection() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing database connection...';
+            resultDiv.className = '';
+            
+            try {
+                // Test a simple query
+                const { data, error } = await window.supabase
+                    .from('users')
+                    .select('count')
+                    .limit(1);
+                
+                if (error) {
+                    resultDiv.innerHTML = '❌ Database connection failed: ' + error.message;
+                    resultDiv.className = 'error';
+                } else {
+                    resultDiv.innerHTML = '✅ Database connection successful!';
+                    resultDiv.className = 'success';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Connection error: ' + error.message;
+                resultDiv.className = 'error';
+            }
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Profile | SKILL HIRE</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(120deg, #e0e7ff 0%, #f4f8fb 100%);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .profile-container {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(96,165,250,0.10), 0 1.5px 8px rgba(30,41,59,0.08);
+      padding: 2.5rem 2.5rem 2rem 2.5rem;
+      min-width: 320px;
+      max-width: 420px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeInCard 0.8s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes fadeInCard {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h2 {
+      text-align: center;
+      color: #2563eb;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      letter-spacing: 1px;
+    }
+    form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    label {
+      font-weight: 500;
+      color: #1e293b;
+      margin-bottom: 0.3rem;
+    }
+    input[type="text"],
+    input[type="email"],
+    select {
+      padding: 0.7rem;
+      border: 1.5px solid #b3b3b3;
+      border-radius: 6px;
+      font-size: 1rem;
+      background: #f9f9f9;
+      transition: border 0.2s;
+      width: 100%;
+      font-family: inherit;
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    select:focus {
+      border: 1.5px solid #2563eb;
+      outline: none;
+    }
+    input[readonly] {
+      background: #e0e7ff;
+      color: #64748b;
+      font-weight: 600;
+      cursor: not-allowed;
+    }
+    .toggle-switch {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-top: 0.2rem;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 54px;
+      height: 28px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #e5e7eb;
+      border-radius: 34px;
+      transition: background 0.3s;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background: #2563eb;
+      border-radius: 50%;
+      transition: transform 0.3s, background 0.3s;
+    }
+    input:checked + .slider {
+      background: #bbf7d0;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+      background: #22c55e;
+    }
+    .toggle-label {
+      font-weight: 600;
+      color: #22c55e;
+      font-size: 1.1rem;
+      transition: color 0.3s;
+    }
+    .toggle-label.unavailable {
+      color: #ef4444;
+    }
+    .error {
+      color: #d8000c;
+      background: #ffd2d2;
+      padding: 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+      display: none;
+      text-align: center;
+    }
+    .save-btn {
+      background: linear-gradient(90deg, #007bff 0%, #60a5fa 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 1rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(96,165,250,0.13);
+      margin-top: 0.5rem;
+      letter-spacing: 1px;
+      transition: background 0.2s, transform 0.1s;
+      width: 100%;
+    }
+    .save-btn:hover {
+      background: linear-gradient(90deg, #0056b3 0%, #60a5fa 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    .back-btn {
+      margin-top: 1.2rem;
+      background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.8rem 2.2rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(96,165,250,0.13);
+      letter-spacing: 1px;
+      transition: background 0.2s, transform 0.1s;
+      display: block;
+      width: 100%;
+    }
+    .back-btn:hover {
+      background: linear-gradient(90deg, #1e40af 0%, #60a5fa 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    @media (max-width: 600px) {
+      .profile-container {
+        padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+        min-width: unset;
+        max-width: 98vw;
+      }
+      h2 {
+        font-size: 1.3rem;
+      }
+      .save-btn, .back-btn {
+        font-size: 1rem;
+        padding: 0.8rem 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-container">
+    <h2>Edit Profile</h2>
+    <div id="errorMsg" class="error"></div>
+    <form id="profileForm" autocomplete="off">
+      <div>
+        <label for="nameInput">Full Name</label>
+        <input type="text" id="nameInput" name="name" required>
+      </div>
+      <div>
+        <label for="emailInput">Email</label>
+        <input type="email" id="emailInput" name="email" readonly value="labourer@email.com">
+      </div>
+      <div>
+        <label for="skillInput">Skill</label>
+        <select id="skillInput" name="skill" required>
+          <option value="">Select Skill</option>
+          <option value="Electrician">Electrician</option>
+          <option value="Plumber">Plumber</option>
+          <option value="Mason">Mason</option>
+          <option value="Carpenter">Carpenter</option>
+          <option value="Painter">Painter</option>
+          <option value="House Keeper">House Keeper</option>
+          <option value="Welder">Welder</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div>
+        <label for="cityInput">City/Location</label>
+        <input type="text" id="cityInput" name="city" required>
+      </div>
+      <div>
+        <label for="phoneInput">Phone Number</label>
+        <input type="text" id="phoneInput" name="phone" maxlength="10" required pattern="\d{10}">
+      </div>
+      <div>
+        <label>Availability</label>
+        <div class="toggle-switch">
+          <label class="switch">
+            <input type="checkbox" id="availabilityToggle" checked>
+            <span class="slider"></span>
+          </label>
+          <span class="toggle-label" id="availabilityLabel">Available</span>
+        </div>
+      </div>
+      <button type="submit" class="save-btn">Save Changes</button>
+    </form>
+    <button class="back-btn" onclick="window.location.href='labour-dashboard.html'">Back to Dashboard</button>
+  </div>
+  <script>
+    // Availability toggle logic
+    const toggle = document.getElementById('availabilityToggle');
+    const label = document.getElementById('availabilityLabel');
+    toggle.addEventListener('change', function() {
+      if (toggle.checked) {
+        label.textContent = 'Available';
+        label.classList.remove('unavailable');
+      } else {
+        label.textContent = 'Unavailable';
+        label.classList.add('unavailable');
+      }
+    });
+
+    // Form validation and save
+    const form = document.getElementById('profileForm');
+    const nameInput = document.getElementById('nameInput');
+    const skillInput = document.getElementById('skillInput');
+    const cityInput = document.getElementById('cityInput');
+    const phoneInput = document.getElementById('phoneInput');
+    const errorMsg = document.getElementById('errorMsg');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      errorMsg.style.display = 'none';
+      errorMsg.textContent = '';
+
+      const name = nameInput.value.trim();
+      const skill = skillInput.value;
+      const city = cityInput.value.trim();
+      const phone = phoneInput.value.trim();
+
+      if (!name || !skill || !city || !phone) {
+        showError('All fields except Email are required.');
+        return;
+      }
+      if (!/^\d{10}$/.test(phone)) {
+        showError('Phone number must be 10 digits.');
+        return;
+      }
+      alert('Profile Updated Successfully!');
+    });
+
+    function showError(message) {
+      errorMsg.textContent = message;
+      errorMsg.style.display = 'block';
+    }
+  </script>
+</body>
+</html> 

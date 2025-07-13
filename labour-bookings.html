@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Job Requests | SKILL HIRE</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(120deg, #e0e7ff 0%, #f4f8fb 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      margin: 2.5rem auto 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(96,165,250,0.10), 0 1.5px 8px rgba(30,41,59,0.08);
+      padding: 2.5rem 2rem 2rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      text-align: center;
+      color: #2563eb;
+      font-size: 2.1rem;
+      margin-bottom: 2rem;
+      letter-spacing: 1px;
+    }
+    .responsive-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(96,165,250,0.06);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .responsive-table th, .responsive-table td {
+      padding: 1rem 0.7rem;
+      text-align: center;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 1rem;
+    }
+    .responsive-table th {
+      background: #f1f5f9;
+      color: #1e293b;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .responsive-table tr:nth-child(even) {
+      background: #f8fafc;
+    }
+    .responsive-table tr:nth-child(odd) {
+      background: #fff;
+    }
+    .status-paid {
+      color: #22c55e;
+      font-weight: 700;
+    }
+    .status-unpaid {
+      color: #ef4444;
+      font-weight: 700;
+    }
+    .action-btn {
+      border: none;
+      border-radius: 6px;
+      padding: 0.5rem 1.2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 0 0.2rem;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 1px;
+    }
+    .accept-btn {
+      background: linear-gradient(90deg, #22c55e 0%, #4ade80 100%);
+      color: #fff;
+    }
+    .accept-btn:hover {
+      background: linear-gradient(90deg, #16a34a 0%, #4ade80 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    .reject-btn {
+      background: linear-gradient(90deg, #ef4444 0%, #f87171 100%);
+      color: #fff;
+    }
+    .reject-btn:hover {
+      background: linear-gradient(90deg, #b91c1c 0%, #f87171 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    .back-btn {
+      margin-top: 1.5rem;
+      background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.8rem 2.2rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(96,165,250,0.13);
+      letter-spacing: 1px;
+      transition: background 0.2s, transform 0.1s;
+      display: block;
+    }
+    .back-btn:hover {
+      background: linear-gradient(90deg, #1e40af 0%, #60a5fa 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    @media (max-width: 800px) {
+      .container {
+        padding: 1.2rem 0.2rem 1.2rem 0.2rem;
+      }
+      .responsive-table th, .responsive-table td {
+        padding: 0.7rem 0.2rem;
+        font-size: 0.95rem;
+      }
+      h1 {
+        font-size: 1.3rem;
+      }
+    }
+    @media (max-width: 600px) {
+      .responsive-table, .responsive-table thead, .responsive-table tbody, .responsive-table th, .responsive-table td, .responsive-table tr {
+        display: block;
+      }
+      .responsive-table thead tr {
+        display: none;
+      }
+      .responsive-table tr {
+        margin-bottom: 1.2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(96,165,250,0.06);
+        background: #fff;
+        padding: 0.7rem 0.2rem;
+      }
+      .responsive-table td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+        min-height: 2.2rem;
+      }
+      .responsive-table td:before {
+        position: absolute;
+        top: 0.7rem;
+        left: 1rem;
+        width: 45%;
+        white-space: nowrap;
+        font-weight: 700;
+        color: #2563eb;
+        content: attr(data-label);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>My Job Requests</h1>
+    <table class="responsive-table" id="bookingsTable">
+      <thead>
+        <tr>
+          <th>Booking ID</th>
+          <th>Client Name</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Address</th>
+          <th>Payment Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-label="Booking ID">BKG101</td>
+          <td data-label="Client Name">Amit Sharma</td>
+          <td data-label="Date">2024-06-22</td>
+          <td data-label="Time">09:00 AM</td>
+          <td data-label="Address">123, Green Park, Delhi</td>
+          <td data-label="Payment Status"><span class="status-paid">Paid</span></td>
+          <td data-label="Action">
+            <button class="action-btn accept-btn" onclick="acceptBooking(this)">Accept</button>
+            <button class="action-btn reject-btn" onclick="rejectBooking(this)">Reject</button>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="Booking ID">BKG102</td>
+          <td data-label="Client Name">Priya Verma</td>
+          <td data-label="Date">2024-06-23</td>
+          <td data-label="Time">01:30 PM</td>
+          <td data-label="Address">45, Lake Road, Mumbai</td>
+          <td data-label="Payment Status"><span class="status-unpaid">Not Paid</span></td>
+          <td data-label="Action">
+            <button class="action-btn accept-btn" onclick="acceptBooking(this)">Accept</button>
+            <button class="action-btn reject-btn" onclick="rejectBooking(this)">Reject</button>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="Booking ID">BKG103</td>
+          <td data-label="Client Name">Rahul Singh</td>
+          <td data-label="Date">2024-06-24</td>
+          <td data-label="Time">04:00 PM</td>
+          <td data-label="Address">78, MG Road, Bangalore</td>
+          <td data-label="Payment Status"><span class="status-paid">Paid</span></td>
+          <td data-label="Action">
+            <button class="action-btn accept-btn" onclick="acceptBooking(this)">Accept</button>
+            <button class="action-btn reject-btn" onclick="rejectBooking(this)">Reject</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <button class="back-btn" onclick="window.location.href='labour-dashboard.html'">Back to Dashboard</button>
+  </div>
+  <script>
+    function acceptBooking(btn) {
+      btn.disabled = true;
+      btn.textContent = 'Accepted';
+      btn.style.background = 'linear-gradient(90deg, #22c55e 0%, #4ade80 100%)';
+      btn.style.cursor = 'not-allowed';
+      btn.nextElementSibling.disabled = true;
+      btn.nextElementSibling.style.opacity = 0.5;
+    }
+    function rejectBooking(btn) {
+      const row = btn.closest('tr');
+      row.style.transition = 'opacity 0.4s';
+      row.style.opacity = 0;
+      setTimeout(() => row.remove(), 400);
+    }
+  </script>
+</body>
+</html> 
